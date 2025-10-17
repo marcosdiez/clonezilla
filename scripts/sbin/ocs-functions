@@ -47,7 +47,7 @@ gen_checksums_for_img_if_assigned() {
   #  fi
   #done
   # Another way to make use of Linux kernel cache is to run in background and use "wait" to be finished.
-  # E.g., 
+  # E.g.,
   # -----------------------------------------
   #    (cd $img_dir; time $imtd * > $out_f &)
   #    wait
@@ -198,7 +198,7 @@ get_partition_table_type_from_img() {
   elif `is_mbr_partitition_table_file $img_dir_fullpath/$(to_filename ${hdsk})-pt.parted`; then
     ptype="mbr"
   else
-    # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition, 
+    # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition,
     pv_on_dsk="$(get_pv_on_disk_from_PV_conf_list "$img_dir_fullpath/lvm_vg_dev.list")"
     for ip in $pv_on_dsk; do
       if [ -n "$(LC_ALL=C echo "${hdsk}" | grep -Ew "${ip}")" ]; then
@@ -224,7 +224,7 @@ is_gpt_partitition_table_file() {
   if [ -n "$(LC_ALL=C grep -iE "^Partition Table:" $p_table_f 2>/dev/null | grep -iE "gpt")" ]; then
     rt_code=0
   elif [ -n "$(LC_ALL=C grep -Ei "^label:[[:space:]]+gpt" ${p_table_f/%-pt.parted/-pt.sf} 2>/dev/null)" ]; then
-    # Sometimes parted has some issues failing to identify that. E.g., 
+    # Sometimes parted has some issues failing to identify that. E.g.,
     # https://lists.gnu.org/archive/html/bug-parted/2022-04/msg00001.html
     # Hence use the backup plan to check partition table file $disk-pt.sf, not $disk-pt.parted.
     rt_code=0
@@ -244,7 +244,7 @@ is_mbr_partitition_table_file() {
   if [ -n "$(LC_ALL=C grep -iE "^Partition Table:" $p_table_f 2>/dev/null | grep -iE "msdos")" ]; then
     rt_code=0
   elif [ -n "$(LC_ALL=C grep -Ei "^label:[[:space:]]+dos" ${p_table_f/%-pt.parted/-pt.sf} 2>/dev/null)" ]; then
-    # Sometimes parted has some issues failing to identify that. E.g., 
+    # Sometimes parted has some issues failing to identify that. E.g.,
     # https://lists.gnu.org/archive/html/bug-parted/2022-04/msg00001.html
     # Hence use the backup plan to check partition table file $disk-pt.sf, not $disk-pt.parted.
     rt_code=0
@@ -262,10 +262,10 @@ is_gpt_partitition_table_disk() {
     return 3
   fi
   if [ -n "$(LC_ALL=C parted -s $input_disk_ print | grep -iE "^Partition Table:" | grep -iE "gpt")" ]
-  then 
+  then
     rt_code=0
   elif [ -n "$(LC_ALL=C sfdisk -d $input_disk_ | grep -Ei "^label:[[:space:]]+gpt")" ]; then
-    # Sometimes parted has some issues failing to identify that. E.g., 
+    # Sometimes parted has some issues failing to identify that. E.g.,
     # https://lists.gnu.org/archive/html/bug-parted/2022-04/msg00001.html
     rt_code=0
   else
@@ -289,7 +289,7 @@ is_gpt_disk_with_bios_boot_part_in_legacy_bios() {
       # This is the case "GPT disk" while legacy BIOS, and a special "bios_boot" partition exists.
       rt_code=0
     elif [ -n "$(LC_ALL=C sfdisk -d $input_disk_ | grep -Ei "type=21686148-6449-6E6F-744E-656564454649,")" ]; then
-      # Sometimes parted has some issues failing to identify that. E.g., 
+      # Sometimes parted has some issues failing to identify that. E.g.,
       # https://lists.gnu.org/archive/html/bug-parted/2022-04/msg00001.html
       # GUID for the BIOS boot partition in the GPT scheme is 21686148-6449-6E6F-744E-656564454649
       # Ref: https://en.wikipedia.org/wiki/BIOS_boot_partition
@@ -312,7 +312,7 @@ is_mbr_partitition_table_disk() {
   then
     rt_code=0
   elif [ -n "$(LC_ALL=C sfdisk -d $input_disk_ | grep -Ei "^label:[[:space:]]+dos")" ]; then
-    # Sometimes parted has some issues failing to identify that. E.g., 
+    # Sometimes parted has some issues failing to identify that. E.g.,
     # https://lists.gnu.org/archive/html/bug-parted/2022-04/msg00001.html
     rt_code=0
   else
@@ -371,7 +371,7 @@ inform_kernel_partition_table_changed() {
     # in /proc/partitions. This will make clonezilla exit when
     # restoring EBR by complaining:
     # Unable to find target partition "sda3".********.
-    # i.e., 
+    # i.e.,
     # root@debian:~# df
     # Filesystem     1K-blocks   Used Available Use% Mounted on
     # udev             1011972      0   1011972   0% /dev
@@ -388,7 +388,7 @@ inform_kernel_partition_table_changed() {
     # /dev/sda6        3030800 566848   2290284  20% /home/partimag <- busy logical drive
     # root@debian:~# cat /proc/partitions
     # major minor  #blocks  name
-    # 
+    #
     #    8        0   12710008 sda
     #    8        1     524288 sda1
     #    8        2    3145728 sda2
@@ -404,7 +404,7 @@ inform_kernel_partition_table_changed() {
     # Error: Can't have a partition outside the disk!
     # root@debian:~# cat /proc/partitions
     # major minor  #blocks  name
-    # 
+    #
     #    8        0   12710008 sda
     #    8        1     524288 sda1
     #    8        2    3145728 sda2
@@ -498,7 +498,7 @@ output_ocs_related_pkgs() {
 } # end of output_ocs_related_pkgs
 #
 dump_hardware_software_info() {
-  local img_dir="$1" 
+  local img_dir="$1"
   local save_time pkg_to_query installed_pkgs hd_tmp dsk_list
   [ -z "$img_dir" ] && return 1
   save_time="$(date +%Y-%m%d-%H%M)"
@@ -532,7 +532,7 @@ dump_hardware_software_info() {
     echo "Saving S.M.A.R.T. data for the drive..."
     dsk_list=""
     # Collect disk info from the file parts of image dir.
-    # Since saveparts does not provide file "disk", 
+    # Since saveparts does not provide file "disk",
     # while file "parts" are common for savedisk and saveparts.
     for ipart in `cat $img_dir/parts`; do
       hd_tmp="$(get_diskname $ipart)"
@@ -580,8 +580,8 @@ dump_hardware_software_info() {
 } # end of dump_hardware_software_info
 #
 save_hidden_data_after_MBR() {
-# This function is used to get the data after the 1st sector, before the first partition. 
-  # Ref: 
+# This function is used to get the data after the 1st sector, before the first partition.
+  # Ref:
   # (1) https://sourceforge.net/forum/message.php?msg_id=5538109
   # (2) http://www-307.ibm.com/pc/support/site.wss/document.do?sitestyle=lenovo&lndocid=MIGR-57590
 
@@ -591,13 +591,13 @@ save_hidden_data_after_MBR() {
   # 2      117194175s  125001764s  7807590s    primary  linux-swap
   # 3      125001765s  312576704s  187574940s  primary  reiserfs
 
-  # While for some model of machines, e.g. 
+  # While for some model of machines, e.g.
   # (1) IBM Thinkpad X61 with backup/restory utility from IBM called Rescue & Recovery installed
   # (2) and or Toshiba
   # Number  Start      End         Size        Type     File system  Flags
   # 1      2048s      12095487s   12093440s   primary  ntfs
   # 2      12095488s  312581719s  300486232s  primary  ntfs         boot
-  # 
+  #
   local src_dsk="$1"  # e.g. sda
   local img_s="$2"    # img_s in the image name with absolute path
   local real_i start_s hidden_data_size hidden_data_after_mbr_limit_in_sec size_exp
@@ -607,7 +607,7 @@ save_hidden_data_after_MBR() {
       echo "You have to assign $i in function save_hidden_data_after_MBR." | tee --append ${OCS_LOGFILE}
       echo "$msg_program_stop." | tee --append ${OCS_LOGFILE}
       # Saving mode, always copy error log to image dir.
-      copy_error_log 
+      copy_error_log
       exit 1
     fi
   done
@@ -622,10 +622,10 @@ save_hidden_data_after_MBR() {
   # Disk /dev/hda: 16777215s
   # Sector size (logical/physical): 512B/512B
   # Partition Table: msdos
-  # 
+  #
   # Number  Start    End       Size     Type     File system  Flags
-  #  2      63s      586844s   586782s  primary  ntfs              
-  #  1      944055s  1530899s  586845s  primary                    
+  #  2      63s      586844s   586782s  primary  ntfs
+  #  1      944055s  1530899s  586845s  primary
   # -------------------------------------------
   # Therefore we can not just use sda1 or hda1 to find the start sector.
   start_s="$(LC_ALL=C parted -s /dev/${src_dsk} unit s print | grep -iE -A 100000 "[[:space:]]*Start[[:space:]]*End[[:space:]]*" | sed -e "s/^.*[[:space:]]*Start[[:space:]]*End[[:space:]]*.*$//g" | sed "/^$/d" | awk -F" " '{print $2}' | sed -e "s/s$//g" | sort -n | head -n 1)"
@@ -690,10 +690,10 @@ restore_hidden_data_after_MBR() {
   # Disk /dev/hda: 16777215s
   # Sector size (logical/physical): 512B/512B
   # Partition Table: msdos
-  # 
+  #
   # Number  Start    End       Size     Type     File system  Flags
-  #  2      63s      586844s   586782s  primary  ntfs              
-  #  1      944055s  1530899s  586845s  primary                    
+  #  2      63s      586844s   586782s  primary  ntfs
+  #  1      944055s  1530899s  586845s  primary
   # -------------------------------------------
   # Therefore we can not just use sda1 or hda1 to find the start sector.
   start_s="$(LC_ALL=C parted -s /dev/${tgt_dsk} unit s print | grep -iE -A 100000 "[[:space:]]*Start[[:space:]]*End[[:space:]]*" | sed -e "s/^.*[[:space:]]*Start[[:space:]]*End[[:space:]]*.*$//g" | sed "/^$/d" | awk -F" " '{print $2}' | sed -e "s/s$//g" | sort -n | head -n 1)"
@@ -785,7 +785,7 @@ get_random_time() {
   # Found ip, ocs_server, mac, we can notify ocs server
   # To avoid all the clients notify at almost same time, we use random sleep before send info.
   # Ref: http://www.faqs.org/docs/abs/HTML/randomvar.html
-  # We need extra uniq seed number, otherwise all the clients boot at same time, same boot sqeuence, will have same Unix time, PID, PPID... then the random will be the same. 
+  # We need extra uniq seed number, otherwise all the clients boot at same time, same boot sqeuence, will have same Unix time, PID, PPID... then the random will be the same.
   # "ifconfig -a" will give the uniq value, since it contains uniq IP address and MAC address.
   # "$RANDOM" is bash built-in random number, Nominal range: 0 - 32767 (signed 16-bit integer).
   # NOTE: ran0: max 10 digits; ran1: max 5 digits, we want ran1 in the order 0-100, so /1000.0
@@ -805,22 +805,22 @@ get_image_cat_zip_cmd() {
   # There are 2 ways to get the compression info
   # (1) By file name. The format is like ${tgt_file}.${fs_pre}-img.${comp_suf} (new format for partclone), or user might choose partimage + lzma (TODO)
   # (2) By file magic, i.e. use command "file"
- 
-  img_comp_format="" 
+
+  img_comp_format=""
   # (1)
   comp_prog_ref="$(echo "$imgf" | grep -Eo -- ".ptcl-img.(gz|bz2|lzo|lzma|xz|lzip|lrz|lz4|zst|uncomp)?")"
-  cpu_no="$(LC_ALL=C grep -iE "^processor" /proc/cpuinfo | wc -l)" 
+  cpu_no="$(LC_ALL=C grep -iE "^processor" /proc/cpuinfo | wc -l)"
   cat_prog=""
   zip_stdin_cmd=""
   unzip_stdin_cmd=""
   if [ -n "$comp_prog_ref" ]; then
-    comp_prog="$(echo "$comp_prog_ref" | sed -e "s/.ptcl-img.//g")" 
+    comp_prog="$(echo "$comp_prog_ref" | sed -e "s/.ptcl-img.//g")"
     case "$comp_prog" in
       uncomp) cat_prog="cat"
               zip_stdin_cmd="cat"
               unzip_stdin_cmd="cat"
               ;;
-      gz)     
+      gz)
               if [ "$cpu_no" -gt 1 ] && \
                  [ "$use_parallel_decompression" = "yes" ] && \
                  type pigz &>/dev/null; then
@@ -833,7 +833,7 @@ get_image_cat_zip_cmd() {
                 unzip_stdin_cmd="gunzip -c"
               fi
               ;;
-      bz2)    
+      bz2)
               if [ "$cpu_no" -gt 1 -a "$use_parallel_decompression" = "yes" ]; then
                 if [ "$parallel_bzip2_prog" = "pbzip2" ] && type pbzip2 &>/dev/null; then
                   cat_prog="pbzip2 -d -c"
@@ -867,9 +867,9 @@ get_image_cat_zip_cmd() {
               zip_stdin_cmd="lzma -c $extra_lzma_opt"
               unzip_stdin_cmd="unlzma -c"
               ;;
-      xz)     
+      xz)
               if [ "$cpu_no" -gt 1 ] && \
-                 [ "$use_parallel_decompression" = "yes" ]; then 
+                 [ "$use_parallel_decompression" = "yes" ]; then
                 cat_prog="xzcat -T 0"
                 zip_stdin_cmd="xz -c -T 0 $extra_xz_opt"
                 unzip_stdin_cmd="unxz -c -T 0"
@@ -879,7 +879,7 @@ get_image_cat_zip_cmd() {
                 unzip_stdin_cmd="unxz -c"
               fi
               ;;
-      lzip)     
+      lzip)
               if [ "$cpu_no" -gt 1 ] && \
                  [ "$use_parallel_decompression" = "yes" ] && \
                  type plzip &>/dev/null; then
@@ -892,7 +892,7 @@ get_image_cat_zip_cmd() {
                 unzip_stdin_cmd="lzip -d -c"
               fi
               ;;
-      lrz|lrzip)     
+      lrz|lrzip)
               # Although lrzip uses "-p value      Set processor count to override number of threads" to assign the CPU number, however, from the manual of lrzip:
               # -p value
               # Set  the  number  of  processor count to determine the number of
@@ -903,7 +903,7 @@ get_image_cat_zip_cmd() {
               # maximise compression but will not attempt to use more  than  one
               # CPU.
               # Therefore there is no need to assign that.
-              cat_prog="lrzip -q -d -o -" 
+              cat_prog="lrzip -q -d -o -"
               zip_stdin_cmd="lrzip -q $extra_lrzip_opt -"
               unzip_stdin_cmd="lrzip -q -d -o -"
               ;;
@@ -1006,7 +1006,7 @@ get_image_cat_zip_cmd() {
       # maximise compression but will not attempt to use more  than  one
       # CPU.
       # Therefore there is no need to assign that.
-      cat_prog="lrzip -q -d -o -" 
+      cat_prog="lrzip -q -d -o -"
       zip_stdin_cmd="lrzip -q $extra_lrzip_opt -"
       unzip_stdin_cmd="lrzip -q -d -o -"
     elif [ -n "$(LC_ALL=C file -Ls $imgf | grep -i "XZ compressed data")" ]; then
@@ -1046,7 +1046,7 @@ get_image_cat_zip_cmd() {
     elif [ -n "$(echo $imgf | grep -iE "\..*-img")" -a -n "$(file -Ls $imgf | grep -i ":.* data$")" ]; then
       # Ex: "sda1.fat16-img: data"
       # This is partclone image. Since this function is called after function is_partclone_image, we do not have to parse the image name again.
-      # Todo: Submit the format of partclone image so that in the future, command "file -Ls" can identify the image format 
+      # Todo: Submit the format of partclone image so that in the future, command "file -Ls" can identify the image format
       cat_prog="cat"
       zip_stdin_cmd="cat"
       unzip_stdin_cmd="cat"
@@ -1240,7 +1240,7 @@ save_part_by_ntfsclone() {
   echo $msg_delimiter_star_line
   [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
   echo "If this action fails or hangs, check:"
-  echo "* Is the disk full ?" 
+  echo "* Is the disk full ?"
   [ "$(root_over_nfs)" = "yes" ] && echo "* Network connection and NFS service."
   [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
   echo $msg_delimiter_star_line
@@ -1524,7 +1524,7 @@ save_part_by_partimage() {
   calculate_elapsed_time $start_time $end_time
   echo ">>> Time elapsed: $time_elapsed secs (~ $time_elapsed_in_min mins)" | tee --append ${OCS_LOGFILE}
   # For better security
-  set_acess_mode_for_img "$tgt_dir/${tgt_file}*" 
+  set_acess_mode_for_img "$tgt_dir/${tgt_file}*"
   # prepare statistic report
   conv_return_code_to_human_read $rc
   report_msg="$report_msg $source_dev, $clone_status, $time_elapsed_in_min mins;"
@@ -1598,7 +1598,7 @@ save_part_by_dd() {
     dd_retcode_file="$(mktemp /tmp/dd_retcode.XXXXXX)"
     echo 1 > $dd_retcode_file
     #
-    ( 
+    (
       (
         LC_ALL=C dd bs=${dd_buffer_size} if=$source_dev $dd_save_extra_opt
         echo $? > $dd_retcode_file
@@ -1690,7 +1690,7 @@ save_part_by_dd() {
     # no preparation time, it's accurate enough.
     echo ">>> Time elapsed: $time_elapsed secs (~ $time_elapsed_in_min mins)" | tee --append ${OCS_LOGFILE}
     # For better security
-    set_acess_mode_for_img "$tgt_dir/$(to_filename ${tgt_file}).dd-img*" 
+    set_acess_mode_for_img "$tgt_dir/$(to_filename ${tgt_file}).dd-img*"
   else
     if ls "$tgt_dir"/$(to_filename ${tgt_file}).dd-img* &>/dev/null; then
       rm -f "$tgt_dir"/$(to_filename ${tgt_file}).dd-img*
@@ -1735,12 +1735,12 @@ image_save() {
   image_name_="$(dirname "$tgt_dir")"
   [ -z "$report_msg" ] && report_msg="Saved $image_name_,"
   # time_elapsed, time_elapsed_in_min and speed are global variables
-  
+
   echo $msg_delimiter_star_line
   # The format for image dir and file: $tgt_dir/${tgt_file}.${fs_pre}-img.${comp_suf}.
   check_if_source_dev_busy_before_saving "$source_dev" "$tgt_dir"
   echo $msg_delimiter_star_line
-  
+
   # get the filesystem and size
   part_fs="$(ocs-get-dev-info $source_dev filesystem 2>/dev/null)"
   part_size="$(ocs-get-dev-info $source_dev size 2>/dev/null)"
@@ -2031,7 +2031,7 @@ get_swap_partition_parted_format() {
     # Disk /dev/sda: 21462876160s
     # Sector size (logical/physical): 512B/512B
     # Partition Table: gpt
-    # 
+    #
     # Number  Start      End           Size          File system     Name  Flags
     #  1      2048s      46874623s     46872576s     linux-swap(v1)
     #  2      46874624s  76171263s     29296640s     ext4            ROOT  boot
@@ -2072,8 +2072,8 @@ get_extended_partition_parted_format() {
     # Disk /dev/sda: 41943040s
     # Sector size (logical/physical): 512B/512B
     # Partition Table: msdos
-    # Disk Flags: 
-    # 
+    # Disk Flags:
+    #
     # Number  Start      End        Size      Type      File system     Flags
     #  1      2048s      9764863s   9762816s  primary   ext4            boot
     #  2      9766910s   16775167s  7008258s  extended
@@ -2166,7 +2166,7 @@ get_known_partition_proc_format() {
        echo -n "."
        part_type="$(LC_ALL=C ocs-get-dev-info "/dev/$p" type filesystem 2>/dev/null | sort)"
        rc=$?
-       [ "$rc" -gt 0 ] && continue 
+       [ "$rc" -gt 0 ] && continue
        # Make part_type in one line
        part_type="$(echo $part_type)"
        if [ "$(echo $part_type | grep -Ei "swap")" ]; then
@@ -2222,7 +2222,7 @@ check_grub_partition() {
     # 2012/06/07, due to an issue about mount: it will hang when mounting extended partition. We have to skip mounting extended partition.
     p_type="$(LC_ALL=C ocs-get-dev-info "$grub_p" type filesystem 2>/dev/null)"
     rc=$?
-    [ "$rc" -gt 0 ] && continue 
+    [ "$rc" -gt 0 ] && continue
     [ -n "$(echo $p_type | grep -Eiw "(swap|extended|0x5|0xf)")" ] && continue
     #
     hd_img="$(mktemp -d /tmp/hd_img.XXXXXX)"
@@ -2259,7 +2259,7 @@ mount_root_partition_for_separate_boot_part() {
       -p|--selected-parts)
           shift
           if [ -z "$(echo $1 |grep ^-.)" ]; then
-            # skip the -xx option, in case 
+            # skip the -xx option, in case
             selected_parts="$1"
             shift
           fi
@@ -2300,13 +2300,13 @@ mount_root_partition_for_separate_boot_part() {
     # 2012/06/07, due to an issue about mount: it will hang when mounting extended partition. We have to skip mounting extended partition.
     p_type="$(LC_ALL=C ocs-get-dev-info "$root_partition" type filesystem 2>/dev/null)"
     rc=$?
-    [ "$rc" -gt 0 ] && continue 
+    [ "$rc" -gt 0 ] && continue
     [ -n "$(echo $p_type | grep -Eiw "(swap|extended|0x5|0xf)")" ] && continue
     #
     mount $root_partition $hd_img >/dev/null 2>&1
     mrc=$?
     # root partition must have /boot, however, we have to skip the Clonezilla live boot media because it also includes /boot/.
-    # Fedora >= 38 uses an extra dir "root" for root file system, i.e., /root/ under the root partition. 
+    # Fedora >= 38 uses an extra dir "root" for root file system, i.e., /root/ under the root partition.
     # Older system just puts the dirs (boot, usr, var, lib) in the / of root file system.
     if [ -d "$hd_img/boot/" -o -d "$hd_img/root/boot/" ] && [ ! -e "$hd_img/Clonezilla-Live-Version" ]; then
        # Found the root partition
@@ -2407,7 +2407,7 @@ check_ntfs_partition_integrity() {
        echo -n "[1] "
        read ntfsfix_ans
        case "$ntfsfix_ans" in
-         2) 
+         2)
 	   # force to save the ntfs filesystem
 	   # ntfsclone_save_extra_opt is a global variable
            ntfsclone_save_extra_opt="--force --rescue"
@@ -2565,7 +2565,7 @@ check_grub_install_version() {
 #
 test_run_grub1_from_restored_os(){
   # The run_grub1_from_restored_os_mode we have to decide to run grub1 from the restored OS. Possible values are "yes" or "no". If "yes", Clonezilla will chroot and run grub-install. If "no", use the grub in the running system to run grub-install --root-directory=....
-  # //NOTE// The OS arch in the running environment must be the same as that in the restored OS, otherwise, e.g. running OS is i386, and restored OS is x86-64, if this option is "yes", you will get error messages when run grub1 install: 
+  # //NOTE// The OS arch in the running environment must be the same as that in the restored OS, otherwise, e.g. running OS is i386, and restored OS is x86-64, if this option is "yes", you will get error messages when run grub1 install:
   # "cannot run command" "Exec format error"
   # Ref: http://sourceforge.net/mailarchive/message.php?msg_name=59c9195a0911211504v7f500c6arf264ec4755d7a1fd%40mail.gmail.com
   # Here we assume if we can "chroot $mount_dir ls", we can run it.
@@ -2583,7 +2583,7 @@ test_run_grub1_from_restored_os(){
   mount $root_prt $mnt_pnt
   rc_=$?
   if [ "$rc_" -gt 0 ]; then
-    echo "Failed to mount $root_prt! Maybe it does not exist or the file system is not supported in the kernel. Skip running grub1 reinstallation!" 
+    echo "Failed to mount $root_prt! Maybe it does not exist or the file system is not supported in the kernel. Skip running grub1 reinstallation!"
     return 1
   fi
   echo "Test if we can chroot the restored OS partition $root_prt..."
@@ -2624,7 +2624,7 @@ run_grub1_from_restored_os() {
   mount $root_prt $mnt_pnt
   rc_=$?
   if [ "$rc_" -gt 0 ]; then
-    echo "Failed to mount $root_prt! Maybe it does not exist or the file system is not supported in the kernel. Skip running grub2 reinstallation!" 
+    echo "Failed to mount $root_prt! Maybe it does not exist or the file system is not supported in the kernel. Skip running grub2 reinstallation!"
     return 1
   fi
   mkdir -p $mnt_pnt/dev
@@ -2682,7 +2682,7 @@ SH_END
 #
 test_run_grub2_from_restored_os(){
   # The run_grub2_from_restored_os_mode we have to decide to run grub2 from the restored OS. Possible values are "yes" or "no". If "yes", Clonezilla will chroot and run grub-install. If "no", use the grub in the running system to run grub-install --root-directory=....
-  # //NOTE// The OS arch in the running environment must be the same as that in the restored OS, otherwise, e.g. running OS is i386, and restored OS is x86-64, if this option is "yes", you will get error messages when run grub2 install: 
+  # //NOTE// The OS arch in the running environment must be the same as that in the restored OS, otherwise, e.g. running OS is i386, and restored OS is x86-64, if this option is "yes", you will get error messages when run grub2 install:
   # "cannot run command" "Exec format error"
   # Ref: http://sourceforge.net/mailarchive/message.php?msg_name=59c9195a0911211504v7f500c6arf264ec4755d7a1fd%40mail.gmail.com
   # Here we assume if we can "chroot $mount_dir ls", we can run it.
@@ -2700,14 +2700,14 @@ test_run_grub2_from_restored_os(){
   mount $root_prt $mnt_pnt
   rc_=$?
   if [ "$rc_" -gt 0 ]; then
-    echo "Failed to mount $root_prt! Maybe it does not exist or the file system is not supported in the kernel. Skip running grub2 reinstallation!" 
+    echo "Failed to mount $root_prt! Maybe it does not exist or the file system is not supported in the kernel. Skip running grub2 reinstallation!"
     return 1
   fi
   echo "Test if we can chroot the restored OS partition $root_prt..."
   # Actually we'd better to test /bin/bash instead of ls since we will run a shell script to for grub-install. However, if we test /bin/bash, we will enter the shell if it's successful.
   LC_ALL=C chroot $mnt_pnt ls &>/dev/null
   rc_=$?
-  # Fedora >= 38 uses an extra dir "root" for root file system, i.e., /root/ under the root partition. 
+  # Fedora >= 38 uses an extra dir "root" for root file system, i.e., /root/ under the root partition.
   if [ "$rc_" -ne 0 ]; then
     LC_ALL=C chroot $mnt_pnt/root/ ls &>/dev/null
     rc_=$?
@@ -2747,10 +2747,10 @@ run_grub2_from_restored_os() {
   mount $root_prt $mnt_pnt
   rc_=$?
   if [ "$rc_" -gt 0 ]; then
-    echo "Failed to mount $root_prt! Maybe it does not exist or the file system is not supported in the kernel. Skip running grub2 reinstallation!" 
+    echo "Failed to mount $root_prt! Maybe it does not exist or the file system is not supported in the kernel. Skip running grub2 reinstallation!"
     return 1
   fi
-  # Fedora >= 38 uses an extra dir "root" for root file system, i.e., /root/ under the root partition. 
+  # Fedora >= 38 uses an extra dir "root" for root file system, i.e., /root/ under the root partition.
   # Older system just puts the dirs (boot, usr, var, lib) in the / of root file system.
   extra_root_path=""
   if [ -d "$mnt_pnt/root/boot" ]; then
@@ -2786,7 +2786,7 @@ fi
 if type grub2-install &>/dev/null; then
   # For Fedora 16 system
   grub_install_cmd="grub2-install"
-else 
+else
   # For Debian-like system
   grub_install_cmd="grub-install"
 fi
@@ -2842,14 +2842,14 @@ do_run_update_initrd_from_restored_os() {
   mount $root_prt $mnt_pnt
   rc_=$?
   if [ "$rc_" -gt 0 ]; then
-    echo "Failed to mount $root_prt! Maybe it does not exist or the file system is not supported in the kernel. Skip running grub2 reinstallation!" 
+    echo "Failed to mount $root_prt! Maybe it does not exist or the file system is not supported in the kernel. Skip running grub2 reinstallation!"
     return 1
   else
     echo "Test if we can chroot the restored OS partition $root_prt..."
     # Actually we'd better to test /bin/bash instead of ls since we will run a shell script to for grub-install. However, if we test /bin/bash, we will enter the shell if it's successful.
     LC_ALL=C chroot $mnt_pnt ls &>/dev/null
     rc_=$?
-    # Fedora >= 38 uses an extra dir "root" for root file system, i.e., /root/ under the root partition. 
+    # Fedora >= 38 uses an extra dir "root" for root file system, i.e., /root/ under the root partition.
     if [ "$rc_" -ne 0 ]; then
       LC_ALL=C chroot $mnt_pnt/root/ ls &>/dev/null
       rc_=$?
@@ -2867,7 +2867,7 @@ do_run_update_initrd_from_restored_os() {
       return 199
     fi
   fi
-  # Fedora >= 38 uses an extra dir "root" for root file system, i.e., /root/ under the root partition. 
+  # Fedora >= 38 uses an extra dir "root" for root file system, i.e., /root/ under the root partition.
   # Older system just puts the dirs (boot, usr, var, lib) in the / of root file system.
   extra_root_path=""
   if [ -d "$mnt_pnt/root/boot" ]; then
@@ -3017,7 +3017,7 @@ load_HD_geometry_opt_from_image() {
     . "$target_d/$(to_filename ${DEV})-chs.sf"
     [ -z "$cylinders" -o -z "$heads" -o -z "$sectors" ] && no_CHS_data_warning
     sfdisk_opt="$sfdisk_opt -C $cylinders -H $heads -S $sectors"
-  else 
+  else
     no_CHS_data_warning
   fi
 } # end of load_HD_geometry_opt_from_image
@@ -3099,7 +3099,7 @@ check_integrity_of_partition_table_in_disk() {
   parted -s $disk_file print &> $dsk_chk_tmp
   rc=$?
   if [ "$rc" -gt 0 ]; then
-    # Sometimes parted has some issues failing to identify that. E.g., 
+    # Sometimes parted has some issues failing to identify that. E.g.,
     # https://lists.gnu.org/archive/html/bug-parted/2022-04/msg00001.html
     sfdisk -d $disk_file &>/dev/null
     rc=$?
@@ -3107,7 +3107,7 @@ check_integrity_of_partition_table_in_disk() {
       # False alarm.
       return 0
     fi
-    # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition, 
+    # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition,
     pv_on_dsk="$(get_pv_on_disk_from_local_machine)"
     pv_on_dsk_flag="false"
     for ip in $pv_on_dsk; do
@@ -3156,7 +3156,7 @@ check_integrity_of_partition_table_in_disk() {
 #
 check_created_partition_table() {
   # This function is used to check the created partition table by "sfdisk -f $dev < $partition_table_file"
-  # It's because we always use -f/--force with sfdisk when creating partition in clonezilla, and "sfdisk --force" will always return value "0", no matter the partition table config file is good or not. This is why here we have to use parted to check it again. 
+  # It's because we always use -f/--force with sfdisk when creating partition in clonezilla, and "sfdisk --force" will always return value "0", no matter the partition table config file is good or not. This is why here we have to use parted to check it again.
   #
   # disk_file is like /dev/hda, /dev/sda...
   local disk_file="$1"
@@ -3172,7 +3172,7 @@ check_created_partition_table() {
   parted -s $disk_file print &> $dsk_chk_tmp
   rc=$?
   if [ "$rc" -gt 0 ]; then
-    # Sometimes parted has some issues failing to identify that. E.g., 
+    # Sometimes parted has some issues failing to identify that. E.g.,
     # https://lists.gnu.org/archive/html/bug-parted/2022-04/msg00001.html
     sfdisk -d $disk_file &>/dev/null
     rc=$?
@@ -3264,14 +3264,14 @@ clean_mbr_gpt_part_table() {
     echo "No dsk_dev was assigned in function clean_mbr_gpt_part_table!" | tee --append ${OCS_LOGFILE}
     echo "$msg_program_stop." | tee --append ${OCS_LOGFILE}
     # Saving mode, always copy error log to image dir.
-    copy_error_log 
+    copy_error_log
     exit 1
   fi
   if [ ! -e "$dsk_dev" ]; then
     echo "Disk \"$tdsk_dev\" not found on the system!" | tee --append ${OCS_LOGFILE}
     echo "$msg_program_stop." | tee --append ${OCS_LOGFILE}
     # Saving mode, always copy error log to image dir.
-    copy_error_log 
+    copy_error_log
     exit 1
   fi
   if type sgdisk &>/dev/null; then
@@ -3285,7 +3285,7 @@ clean_mbr_gpt_part_table() {
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     echo "$msg_program_stop." | tee --append ${OCS_LOGFILE}
     # Saving mode, always copy error log to image dir.
-    copy_error_log 
+    copy_error_log
     exit 1
   fi
 } # end of clean_mbr_gpt_part_table
@@ -3344,7 +3344,7 @@ create_mbr_partition_table() {
   # However, some people also call executable code area (first 446 bytes in MBR) as MBR.
   case "$create_part_by_sfdisk" in
     n|N|[nN][oO])
-      dd if="$tgt_dir/$(to_filename $tgt_hd_name)-mbr" of=$tgt_hd_file skip=446 seek=446 bs=1 count=66 2>&1 | tee --append $OCS_LOGFILE 
+      dd if="$tgt_dir/$(to_filename $tgt_hd_name)-mbr" of=$tgt_hd_file skip=446 seek=446 bs=1 count=66 2>&1 | tee --append $OCS_LOGFILE
       RETVAL="${PIPESTATUS[0]}"
       if [ "$RETVAL" -eq 0 ]; then
         echo -n "Making kernel re-read the partition table of $tgt_hd_file... " | tee --append $OCS_LOGFILE
@@ -3395,7 +3395,7 @@ create_mbr_partition_table() {
           # Create partition table by sfdisk and [hsv]d[a-z]-pt.sf
           # If target_disk size is larger than 2 TiB (~2.2 TB = 2,199,023,255,040 bytes), exit. It's over the MBR's limitation.
           init_mbr_part_table_if_not_existing $tgt_hd_file
-          check_mbr_disk_size_gt_2TiB $tgt_hd_file warning 
+          check_mbr_disk_size_gt_2TiB $tgt_hd_file warning
           sfdisk_cmd_mbr="LC_ALL=C sfdisk $sfdisk_opt $tgt_hd_file < \"$tgt_dir/$(to_filename ${tgt_hd_name})-pt.sf\" 2>&1 | tee -a $OCS_LOGFILE"
           echo "Running: $sfdisk_cmd_mbr" | tee -a $OCS_LOGFILE
 	  eval $sfdisk_cmd_mbr | tee -a $OCS_LOGFILE
@@ -3499,7 +3499,7 @@ create_gpt_partition_table() {
       # ===================================================
       # partition table of /dev/sda
       # unit: sectors
-      # 
+      #
       # /dev/sda1 : start=        1, size=4294967295, Id=ee
       # /dev/sda2 : start=        0, size=        0, Id= 0
       # /dev/sda3 : start=        0, size=        0, Id= 0
@@ -3512,7 +3512,7 @@ create_gpt_partition_table() {
       # unit: sectors
       # first-lba: 34
       # last-lba: 125829086
-  
+
       # /dev/sda1 : start=        2048, size=      614400, type=DE94BBA4-06D1-4D40-A16A-BFD50179D6AC, uuid=7163ACE9-9949-453E-8DF2-F1723DAFD051, name="Basic data partition", attrs="RequiredPartiton GUID:63"
       # /dev/sda2 : start=      616448, size=      202752, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, uuid=EA6B87BC-3976-4F47-A72E-793C9CEC6303, name="EFI system partition", attrs="GUID:63"
       # /dev/sda3 : start=      819200, size=      262144, type=E3C9E316-0B5C-4DB8-817D-F92DF00215AE, uuid=B3E0D044-8F53-423F-9C37-90F3D8F84815, name="Microsoft reserved partition", attrs="GUID:63"
@@ -3577,7 +3577,7 @@ create_gpt_partition_table() {
           sleep 1
           LC_ALL=C echo "spawn gdisk $tgt_hd_file; expect Command; send wq\r; expect \"Do you want to proceed? (Y/N)\"; send Y\r; expect eof" | expect -f -
         fi
-  
+
         [ -e "$gdisk_tmp" ] && rm -f $gdisk_tmp
       fi
       ;;
@@ -3603,11 +3603,11 @@ create_gpt_partition_table() {
      # Disk /dev/hda: 16777215s
      # Sector size (logical/physical): 512B/512B
      # Partition Table: gpt
-     # 
-     # Number  Start     End        Size       File system  Name     Flags  
+     #
+     # Number  Start     End        Size       File system  Name     Flags
      #  1      34s       409640s    409607s    fat32        primary  msftres
-     #  2      409641s   4316406s   3906766s   ext2         primary         
-     #  3      4316407s  15625000s  11308594s  reiserfs     primary         
+     #  2      409641s   4316406s   3906766s   ext2         primary
+     #  3      4316407s  15625000s  11308594s  reiserfs     primary
      # --------------------
      echo "Restoring the secondary GPT to $tgt_hd_file..."
      to_seek="$((${src_disk_size_sec}-33+1))"
@@ -3615,7 +3615,7 @@ create_gpt_partition_table() {
      echo "Running: $sfdisk_cmd_gpt" | tee -a $OCS_LOGFILE
      eval $sfdisk_cmd_gpt | tee -a $OCS_LOGFILE
    fi
-  
+
    inform_kernel_partition_table_changed gpt $tgt_hd_file | tee --append ${OCS_LOGFILE}
    sleep 1
    [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
@@ -3642,12 +3642,12 @@ create_partition() {
 
   turn_off_swap_and_LVM2 $tgt_hd_file
 
-  # The following actions must be after turn_off_swap_and_LVM2, since if swap and LVM2 is not off, partimage or ntfsclone will not be able to write the busy partitions. 
+  # The following actions must be after turn_off_swap_and_LVM2, since if swap and LVM2 is not off, partimage or ntfsclone will not be able to write the busy partitions.
 
   echo "Creating partition in $tgt_hd_file..." | tee --append $OCS_LOGFILE
   check_if_disk_busy_before_create_partition $tgt_hd_file
 
-  # src_disk_size_sec, src_disk_size_GB, tgt_disk_size_sec, tgt_disk_size_GB will be got from get_dsk_size_from_img_and_tgt_dsk_size_from_machine 
+  # src_disk_size_sec, src_disk_size_GB, tgt_disk_size_sec, tgt_disk_size_GB will be got from get_dsk_size_from_img_and_tgt_dsk_size_from_machine
   get_dsk_size_from_img_and_tgt_dsk_size_from_machine "$tgt_dir" "${tgt_hd_name}" "${tgt_hd_name}"
 
   if [ "$chk_tgt_disk_size_bf_mk_pt" = "yes" ]; then
@@ -3665,7 +3665,7 @@ create_partition() {
   fi
 
   # Before Writing partition table, clean every file system and LV info
-  # in every partition. Otherwise, when partition table is created, 
+  # in every partition. Otherwise, when partition table is created,
   # the residual info, like LVM might be detected by kernel and instantly
   # enabled. This will make some device is busy.
   # Ref: https://sourceforge.net/p/clonezilla/bugs/254/
@@ -3758,7 +3758,7 @@ countdown_or_confirm_before_restore() {
       -i|--init-description)
          shift
          if [ -z "$(echo $1 |grep ^-.)" ]; then
-           # skip the -xx option, in case 
+           # skip the -xx option, in case
            init_des="$1"
            shift
          fi
@@ -3857,7 +3857,7 @@ task_preprocessing() {
   # mount_point
   if [ -n "$mount_point" ]; then
     if [ -n "$(echo "$mount_point" | grep ":")" ]; then
-      server_tmp="$(echo "$mount_point" | awk -F":" '{print $1}')"  
+      server_tmp="$(echo "$mount_point" | awk -F":" '{print $1}')"
       mntpnt_tmp="$(echo "$mount_point" | awk -F":" '{print $2}')"
     else
       server_tmp="$(awk '$2 ~ /\/$/ {print $1}' /etc/fstab | awk -F ":" '{print $1}')"
@@ -3883,7 +3883,7 @@ prepare_ecryptfs_mount_point_if_necessary() {
   target_dir_orig=""
   # Function to prepare ecryptefs mount point
   case "$ocs_sr_type" in
-   *save*) if [ "$encrypt_ocs_img" = "yes" ]; then 
+   *save*) if [ "$encrypt_ocs_img" = "yes" ]; then
 	     mkdir -p "$ocsroot/$target_dir"
 	     task_ecryptfs_mount_point "$ocs_sr_type"
 	     rc_="$?"
@@ -3931,7 +3931,7 @@ task_processing_after_parameters_checked() {
       my_ocs_exit 1
     fi
     if [ -e /var/lib/clonezilla/ocs-vars.before-ocs-chkimg ]; then
-      mv -f /var/lib/clonezilla/ocs-vars.before-ocs-chkimg /var/lib/clonezilla/ocs-vars 
+      mv -f /var/lib/clonezilla/ocs-vars.before-ocs-chkimg /var/lib/clonezilla/ocs-vars
     fi
   fi
 } # end of task_processing_after_parameters_checked
@@ -3981,7 +3981,7 @@ run_post_cmd_when_clone_end() {
     *)
       # if post_run is echo true, do not show it
       [ "$post_run" != "true" ] && echo -n "Running $post_run..."
-      $post_run 
+      $post_run
       echo
       ;;
   esac
@@ -4124,7 +4124,7 @@ task_postprocessing() {
 	                   # Outputs are disk_list, parts_list, img_time, disks_size_all
         umount_ecryptfs_mount_point_if_necessary
 	# Put a tag file in the original image dir
-	put_ecryptefs_tag_file_in_img # Inputs are ocsroot_orig, target_dir_orig, 
+	put_ecryptefs_tag_file_in_img # Inputs are ocsroot_orig, target_dir_orig,
 	                              # disk_list, parts_list, img_time, disks_size_all
       fi
       ;;
@@ -4164,7 +4164,7 @@ task_postprocessing() {
     fi
   fi
 
-  # 
+  #
 } # end of task_postprocessing
 #
 ask_time_or_clients_to_wait_for_mcast() {
@@ -4172,9 +4172,9 @@ ask_time_or_clients_to_wait_for_mcast() {
   local time_opt_tmp
   # Note!!! We must use common tmp file to pass the result, we can not
   # just echo result in the end of this function. Otherwise in newer
-  # dialog (FC3), the script will wait for the end of function, then it 
-  # shows the result. 
-  # There is nothing in the screen when function is called if we just 
+  # dialog (FC3), the script will wait for the end of function, then it
+  # shows the result.
+  # There is nothing in the screen when function is called if we just
   # use echo the result to stdout.
   ANS_TMP="$1"
   local mcast_cln_no="$2"
@@ -4201,7 +4201,7 @@ ask_time_or_clients_to_wait_for_mcast() {
     dcs_mcast_type="$(cat $TMP)"
   fi
   case "$dcs_mcast_type" in
-    "time-to-wait") 
+    "time-to-wait")
        $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
        --inputbox "$msg_time_to_wait_sec ?" 0 0 "$TIME_TO_WAIT_DEFAULT" 2> $TMP
        time_opt_tmp="$(cat $TMP)"
@@ -4244,7 +4244,7 @@ ask_time_or_clients_to_wait_for_mcast() {
        [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
        echo "$msg_program_stop!"
        exit 1
-  esac 
+  esac
   [ -f "$TMP" ] && rm -f $TMP
 } # end of ask_time_or_clients_to_wait_for_mcast
 #
@@ -4327,9 +4327,9 @@ get_input_image_name() {
     # return the image name
     # Note!!! We must use common tmp file to pass the result, we can not
     # just echo result in the end of this function. Otherwise in newer
-    # dialog (FC3), the script will wait for the end of function, then it 
-    # shows the result. 
-    # There is nothing in the screen when function is called if we just 
+    # dialog (FC3), the script will wait for the end of function, then it
+    # shows the result.
+    # There is nothing in the screen when function is called if we just
     # use echo the result to stdout.
     ANS_TMP="$1"
     local img_name_assign="$2"  # target name assigned. This is optional.
@@ -4349,18 +4349,18 @@ get_input_image_name() {
       if [ -n "$(echo $tgt_img_name | grep -Eo '[^[:alnum:]_%().-]')" ]; then
         # We just accept the image name contains alphabet, digit, _, %, (, ), dot (.) and - (put in the end so that it won't be interpreted as a range operator.
         $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-        --msgbox "$msg_you_must_input_legal_filename!\n$msg_please_do_it_again!" 0 0 
+        --msgbox "$msg_you_must_input_legal_filename!\n$msg_please_do_it_again!" 0 0
       elif [ -n "$(echo $tgt_img_name | grep -E "(^|[[:space:]]+)([0-9ab]|-b|single|s)($|[[:space:]]+)")" ]; then
         # 0-9, a, b, -b, single, s will confuse init, which could be rc[0-9], a, b, -b, single, s mode
         $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-        --msgbox "$msg_1_6_a_b_is_reserved!\n$msg_please_do_it_again!" 0 0 
+        --msgbox "$msg_1_6_a_b_is_reserved!\n$msg_please_do_it_again!" 0 0
       elif [ -n "$(echo $tgt_img_name | grep -Ew "(\.ntfs-img|\.dd-img|\.ptcl-img)")" ]; then
-        # .ntfs-img and .dd-img is reserved for image name type and format use. 
+        # .ntfs-img and .dd-img is reserved for image name type and format use.
         $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-        --msgbox "$msg_name_ntfs_dd_img_is_reserved!\n$msg_please_do_it_again!" 0 0 
+        --msgbox "$msg_name_ntfs_dd_img_is_reserved!\n$msg_please_do_it_again!" 0 0
       elif [ -z "$tgt_img_name" ]; then
         $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-        --yesno "$msg_you_must_input_filename! $msg_do_u_want_to_do_it_again" 0 0 
+        --yesno "$msg_you_must_input_filename! $msg_do_u_want_to_do_it_again" 0 0
         ans_="$?"
         case "$ans_" in
           0) # yes is chosen
@@ -4414,7 +4414,7 @@ get_disk_serial_no() {
     # lrwxrwxrwx 1 root root   9 2009-01-23 20:18 ata-ST3160815AS-6RX1880B -> ../../sda
     serialno="$(LC_ALL=C find /dev/disk/by-id/ -lname "*${dsk_}" -print 2>/dev/null | sort | uniq | head -n 1 | xargs basename 2>/dev/null)"
   fi
-  # results e.g.: 
+  # results e.g.:
   # ata-ST3160815AS-6RX1880B
   # scsi-SATA_ST3160815AS_6RX1880B
   # ata-Hitachi_HTS543232L9A300_080617FB0400LEG4X7EA
@@ -4437,14 +4437,14 @@ get_disk_or_part_hardware_info() {
     DEV_MODEL="NOT_SUPPORTED_DEV"
     return 1
   fi
-  
+
   if is_partition "$p"; then
-    # Partition 
-    
+    # Partition
+
     # First check if swap/extended one. If so, skip it.
     part_type="$(jq -r ".[] | select(.name == \"$p\") | .type, .fstype" $hwinfo_json_f)"
     rc=$?
-    # The return "8" means return "continue" (8 characters). 
+    # The return "8" means return "continue" (8 characters).
     # Here this function is extracted from a loop.
     # No more using "continue" in this function.
     # Because >= bash 4.4 raises it as a warning, and then continue won't be run.
@@ -4619,9 +4619,9 @@ get_input_dev_name() {
     # return the hardisks or partitions
     # Note!!! We must use common tmp file to pass the result, we can not
     # just echo result in the end of this function. Otherwise in newer
-    # dialog (FC3), the script will wait for the end of function, then it 
-    # shows the result. 
-    # There is nothing in the screen when function is called if we just 
+    # dialog (FC3), the script will wait for the end of function, then it
+    # shows the result.
+    # There is nothing in the screen when function is called if we just
     # use echo the result to stdout.
     local dev_type selection skip_lvm msg_choose_dev_to_what dev_to_be_exclude
     local dev_list=""
@@ -4634,7 +4634,7 @@ get_input_dev_name() {
     local ASK_INPUT=1   # init value 1 means we have to ask
     # Flag to include disk as partition, which means /dev/sda, for example, could contain file system.
     # This will only use for mounting that as image repository.
-    local inc_disk_as_part="no" 
+    local inc_disk_as_part="no"
     local hd_fs dev_list_kept
 
     while [ $# -gt 0 ]; do
@@ -4822,7 +4822,7 @@ get_input_dev_name() {
       target_dev="$(cat $TMP)"
       if [ -z "$target_dev" ]; then
         $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-        --yesno "$msg_you_must_choose_a_dev $msg_do_u_want_to_do_it_again" 0 0 
+        --yesno "$msg_you_must_choose_a_dev $msg_do_u_want_to_do_it_again" 0 0
          ans_="$?"
          case "$ans_" in
            0) # yes is chosen
@@ -4837,7 +4837,7 @@ get_input_dev_name() {
       fi
     done
 
-    [ -f "$TMP" ] && rm -f $TMP 
+    [ -f "$TMP" ] && rm -f $TMP
     [ -f "$blk_info_f" ] && rm -f $blk_info_f
 
     # (1) Strip the unnecessary quotation mark "
@@ -4896,7 +4896,7 @@ get_existing_disk_image() {
        fileinfo=$fileinfo"_"$(tr ' ' _ < $imagedir/$file/disk 2>/dev/null)
        disks_size_all=""
        if [ -e "$imagedir/$file/disk" ]; then
-         for ihd in `get_disk_list_from_img $imagedir/$file` ; do 
+         for ihd in `get_disk_list_from_img $imagedir/$file` ; do
            disk_size_=""
            if [ -e "$imagedir/$file/$(to_filename ${ihd})-pt.parted.compact" ]; then
              disk_size_="$(LC_ALL=C grep -E "^Disk /dev/" $imagedir/$file/$(to_filename ${ihd})-pt.parted.compact | awk -F":" '{print $2}' | sed -r -e "s/[[:space:]]//g")"
@@ -4994,16 +4994,16 @@ get_existing_parts_image() {
        # Encrypted image
        . $imagedir/$file/ecryptfs.info
        fileinfo="${time_of_img}-enc"
-       if [ -f "$imagedir/$file/parts" ]; then 
+       if [ -f "$imagedir/$file/parts" ]; then
 	 fileinfo=$fileinfo"_""$(echo $parts_of_img | tr ' ' _)"
-       elif [ -f "$imagedir/$file/disk" ]; then 
+       elif [ -f "$imagedir/$file/disk" ]; then
 	 fileinfo=$fileinfo"_""$(echo $disk_of_img | tr ' ' _)"
        fi
      else
        fileinfo="$(get_img_created_time $imagedir/$file)"
-       if [ -f "$imagedir/$file/parts" ]; then 
+       if [ -f "$imagedir/$file/parts" ]; then
          fileinfo=$fileinfo"_"$(tr ' ' _ < $imagedir/$file/parts)
-       elif [ -f "$imagedir/$file/disk" ]; then 
+       elif [ -f "$imagedir/$file/disk" ]; then
          fileinfo=$fileinfo"_"$(tr ' ' _ < $imagedir/$file/disk)
        fi
      fi
@@ -5081,7 +5081,7 @@ get_existing_disks_from_img() {
        tgt_disks="$(cat $TMP)"
        if [ -z "$tgt_disks" ]; then
          $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-        --yesno "$msg_you_must_input_partition! $msg_do_u_want_to_do_it_again" 0 0 
+        --yesno "$msg_you_must_input_partition! $msg_do_u_want_to_do_it_again" 0 0
          ans_="$?"
          case "$ans_" in
            0) # yes is chosen
@@ -5137,10 +5137,10 @@ get_existing_partitions_from_img() {
      trap "[ -f "$TMP" ] && rm -f $TMP" HUP INT QUIT TERM EXIT
      # List the partitions in dialog/whiptail like:
      # [ ] sda1  disk(sda)_partition(1)
-     # [ ] sda5  disk(sda)_partition(5)    
+     # [ ] sda5  disk(sda)_partition(5)
      # Skip the mounted partition if this is running in clonezilla client. i.e. the selected partition will write to the partition in this machine.
      # On the other hand, if this function is called by DRBL server, it's not necessary to skip the mounted partition, since it's nothing to do with the mounted partition in the server.
-     PROMPT="$(for p in $p_list; do 
+     PROMPT="$(for p in $p_list; do
        if [ "$skip_mounted_part" = "yes" ]; then
          [ -n "$(mount | grep -Ew "^/dev/$p")" ] && continue
        fi
@@ -5172,7 +5172,7 @@ get_existing_partitions_from_img() {
        tgt_parts="$(cat $TMP)"
        if [ -z "$tgt_parts" ]; then
          $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-        --yesno "$msg_you_must_input_partition! $msg_do_u_want_to_do_it_again" 0 0 
+        --yesno "$msg_you_must_input_partition! $msg_do_u_want_to_do_it_again" 0 0
          ans_="$?"
          case "$ans_" in
            0) # yes is chosen
@@ -5213,7 +5213,7 @@ check_dhcpd_config() {
 }
 check_dhcpd_if_range() {
   # Warning if range option is used in dhcpd.conf
-  grep "^[ +]*[^#][ *]range" $DHCPDCONF_DIR/dhcpd.conf > /dev/null 2>&1 
+  grep "^[ +]*[^#][ *]range" $DHCPDCONF_DIR/dhcpd.conf > /dev/null 2>&1
   RETVAL=$?
   if [ $RETVAL -eq 0 ]; then
     # found the range option, which is not comment
@@ -5426,7 +5426,7 @@ _EOT_
       ;;
   esac
   # partimage will return 1 no matter it finishes or not when we use stdin and
-  # other options to suppress the warning message... 
+  # other options to suppress the warning message...
   # So just return 0. This is very minor since now we use partclone as default engine
   rc=0
   end_time="$(date +%s%N)"
@@ -5459,7 +5459,7 @@ unicast_restore_by_ntfsclone() {
   echo "Starting unicast restoring image ${target_d##*/} to $part..."
   [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
   echo "If this action fails or hangs, check:"
-  echo "* Is the saved image $target_d/$img_file_prefix corrupted ?" 
+  echo "* Is the saved image $target_d/$img_file_prefix corrupted ?"
   [ "$(root_over_nfs)" = "yes" ] && echo "* Network connection and NFS service."
   [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
   echo $msg_delimiter_star_line
@@ -5487,7 +5487,7 @@ unicast_restore_by_partclone() {
   local file_ fs_ partclone_img_info_tmp file_basename
   local unzip_cmd_error cmd_partclone_rest split_flag link_flag restore_flag run_cmd_
   local -a retcodes='()'
-  # First, we find the filesystem 
+  # First, we find the filesystem
   file_="$(unalias ls &>/dev/null; ls "$target_d"/$img_file.*-img* 2>/dev/null | sort | head -n 1)"
   if [ -n "${file_}" ]; then
     file_basename="$(basename ${file_})"
@@ -5512,7 +5512,7 @@ unicast_restore_by_partclone() {
   else
     link_flag="no"
   fi
- 
+
   if [ -n "$(echo "$file_basename" | grep -Eo -- "-ptcl-img")" ]; then
     # New format
     if [ -n "$(echo "$file_basename" | grep -Eo -- "-ptcl-img.*.aa")" ]; then
@@ -5569,9 +5569,9 @@ unicast_restore_by_partclone() {
   if [ "$link_flag" = "no" -a "$split_flag" = "no" ]; then
     # Special case: no link + no split. To get the best performance, remove cat,
     # and avoid the error the some compression program can not read link file, e.g., pixz does not have "-f" like zstdmt.
-    restore_flag="direct" 
+    restore_flag="direct"
   else
-    restore_flag="cat" 
+    restore_flag="cat"
   fi
 
   get_partclone_direct_io_opt write $part # Obtain ptcl_write_dio_opt
@@ -5686,7 +5686,7 @@ unicast_restore_by_dd() {
   echo "Starting unicast restoring image ${target_d##*/} to $part..."
   [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
   echo "If this action fails or hangs after several minutes, check:"
-  echo "* Is the saved image $target_d/$img_file_prefix corrupted ?" 
+  echo "* Is the saved image $target_d/$img_file_prefix corrupted ?"
   [ "$(root_over_nfs)" = "yes" ] && echo "* Network connection and NFS service."
   [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
 
@@ -5699,7 +5699,7 @@ unicast_restore_by_dd() {
     trigger_dd_status_report $part $part_size &
     dd_report_sig_pid=$!
     echo $msg_delimiter_star_line
-    
+
     start_time="$(date +%s%N)"
     # dd does not put any header, so just cat them
     unzip_retcode_file="$(mktemp /tmp/unzip_retcode.XXXXXX)"
@@ -5768,13 +5768,13 @@ _EOT_
     | $unzip_stdin_cmd 2> $unzip_cmd_error \
     | LC_ALL=C partclone.dd $PARTCLONE_RESTORE_OPT --buffer_size ${partclone_dd_bs} -L $partclone_img_info_tmp -s - -o $part
     retcodes=(${PIPESTATUS[@]})
-    
+
     if [ ${retcodes[1]} -eq 0 -a ${retcodes[2]} -eq 0 ]; then
       rc=0
     else
       rc=1
     fi
-    
+
     cat "${partclone_img_info_tmp}" >> ${OCS_LOGFILE}
     ocs_log_rotate "$ocs_log_dir/partclone-$(to_filename ${part#/dev/*}).log"
     cp "${partclone_img_info_tmp}" "$ocs_log_dir/partclone-$(to_filename ${part#/dev/*}).log"
@@ -5817,7 +5817,7 @@ _EOT_
   $udpcast_rec_cmd 2>$udpcast_stderr | $unzip_stdin_cmd | partimage \
   $DEFAULT_PARTIMAGE_RESTORE_OPT $PARTIMAGE_RESTORE_OPT restore $part stdin | tee --append ${OCS_LOGFILE}
   # partimage will return 1 no matter it finishes or not when we use stdin and
-  # other options to suppress the warning message... 
+  # other options to suppress the warning message...
   # So just return 0. This is very minor since now we use partclone as default engine
   rc=0
   end_time="$(date +%s%N)"
@@ -5847,7 +5847,7 @@ multicast_restore_by_ntfsclone() {
   echo "Waiting for the image from server..."
   [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
   echo "If this action fails or hangs, check:"
-  echo "* Is the saved image $target_d/$img_file.ntfs-img* corrupted ?" 
+  echo "* Is the saved image $target_d/$img_file.ntfs-img* corrupted ?"
   [ "$(root_over_nfs)" = "yes" ] && echo "* Network connection or switch ? Did you forget to link those network switches if you have more than 1 ? Does your network switch block multicast packet ?"
   [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
   echo $msg_delimiter_star_line
@@ -5874,7 +5874,7 @@ multicast_restore_by_partclone() {
   unzip_stdin_cmd="$2"
 
   if [ -z "$fs_" ]; then
-    # First, we find the filesystem 
+    # First, we find the filesystem
     # Image files are like: sda2.hfsp-img.aa  sda2.hfsp-img.ab  sda2.hfsp-img.ac
     file_="$(unalias ls &>/dev/null; ls "$target_d"/$img_file.*-img* 2>/dev/null | sort | head -n 1)"
     file_basename="$(basename ${file_})"
@@ -5981,7 +5981,7 @@ multicast_restore_by_dd() {
   echo "Waiting for the image from server..."
   [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
   echo "If this action fails or hangs after several minutes, check:"
-  echo "* Is the saved image $target_d/$img_file.dd-img* corrupted ?" 
+  echo "* Is the saved image $target_d/$img_file.dd-img* corrupted ?"
   [ "$(root_over_nfs)" = "yes" ] && echo "* Network connection or switch ? Did you forget to link those network switches if you have more than 1 ? Does your network switch block multicast packet ?"
   [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
   echo $msg_delimiter_star_line
@@ -6119,7 +6119,7 @@ do_multicast_udpcast_restore() {
   # if the report_msg is empty, put the initial one: image_name_
   image_name_="$(basename "$target_d")"
   [ -z "$report_msg" ] && report_msg="Multicast restored $image_name_,"
-  udpcast_rec_cmd="udp-receiver $udp_receiver_extra_opt_default --nokbd --mcast-all-addr $MULTICAST_ALL_ADDR --portbase $port $TIME_TO_LIVE_OPT" 
+  udpcast_rec_cmd="udp-receiver $udp_receiver_extra_opt_default --nokbd --mcast-all-addr $MULTICAST_ALL_ADDR --portbase $port $TIME_TO_LIVE_OPT"
   echo $msg_delimiter_star_line | tee --append ${OCS_LOGFILE}
   echo "Starting to restore image ${target_d##*/} to $part..."
   if [ -f "$target_d/$img_file.000" -o \
@@ -6161,7 +6161,7 @@ do_multicast_udpcast_restore() {
   hdtmp="$(get_disk_from_part $part)"
   pt_type="$(get_partition_table_type_from_disk $hdtmp)"
   inform_kernel_partition_table_changed $pt_type $hdtmp | tee --append ${OCS_LOGFILE}
-  
+
   # note! We must sleep a while to let the udp-receiver to finish their jobs then start the next ones.
   echo -n "Preparing the next... " | tee --append ${OCS_LOGFILE}
   # we sleep at least 3 secs.
@@ -6262,7 +6262,7 @@ multicast_feed_img_for_ntfsclone() {
 multicast_feed_img_for_partclone() {
   local file_ fs_ file_basename
   # Variable "$img_file" is like "sda1"
-  # First, we find the filesystem 
+  # First, we find the filesystem
   # Image files are like: sda1.hfsp-img.aa  sda1.hfsp-img.ab  sda1.hfsp-img.ac
   file_="$(unalias ls &>/dev/null; ls "$imagedir/$target_d"/$img_file.*-img* 2>/dev/null | sort | head -n 1)"
   file_basename="$(basename ${file_})"
@@ -6354,8 +6354,8 @@ udp_send_part_img_or_dev() {
   img_file="$(to_filename $2)"  # e.g. sda1.ext4-ptcl-img.gz.aa or cciss-c0d0p1.ext4-ptcl-img.gz.aa
   part="$(format_dev_name_without_leading_dev $3)" # e.g., sda1, sda2
   # for the 2nd and other partition, we should shorten the preparation time
-  [ -n "$mcast_wait_time" -a $ipart -gt 1 ] && udpcast_hold_opt1="--min-wait $PART_PREPARE_TIME" 
-  [ -n "$mcast_max_wait_time" -a $ipart -gt 1 ] && udpcast_hold_opt3="--max-wait $PART_PREPARE_TIME" 
+  [ -n "$mcast_wait_time" -a $ipart -gt 1 ] && udpcast_hold_opt1="--min-wait $PART_PREPARE_TIME"
+  [ -n "$mcast_max_wait_time" -a $ipart -gt 1 ] && udpcast_hold_opt3="--max-wait $PART_PREPARE_TIME"
   if [ -z "$eth_for_multicast" ]; then
      [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
      echo "No ethernet port was assigned for multicast packets!"
@@ -6370,7 +6370,7 @@ udp_send_part_img_or_dev() {
     #(1) Decide the file system
     #(2) Decide the compression method
     check_if_source_dev_busy_before_saving "/dev/$part" "dummy"
-  
+
     # get the filesystem
     ptfs="$(ocs-get-dev-info /dev/$part filesystem 2>/dev/null)"
     if [ -z "$ptfs" ]; then
@@ -6410,7 +6410,7 @@ udp_send_part_img_or_dev() {
       multicast_feed_img_for_dd
     fi
   fi
-  # prepare parameters for the next 
+  # prepare parameters for the next
   ipart="$((ipart+1))"
   port="$((port+2))"
   [ -n "$verbose" ] && echo "done!"
@@ -6636,7 +6636,7 @@ get_ezio_prog(){
 } # end of get_ezio_prog
 #
 collect_bittorrent_restore_dev() {
-  # This function only collects partition/LV as "all_bt_part_lv". 
+  # This function only collects partition/LV as "all_bt_part_lv".
   # Later ocs-btsrv will be used to deploy all the devices.
   local target_d="$1"
   local part_img_dir="$(to_filename $2)"
@@ -6723,7 +6723,7 @@ do_d2d_local_restore() {
 do_d2d_network_restore() {
   local target_d="$1"
   local part="${2#/dev/*}"  # part is like sda1
-  local rc hdtmp pt_type part_fs d2d_recv_cmd tgt_pt_info 
+  local rc hdtmp pt_type part_fs d2d_recv_cmd tgt_pt_info
   echo $msg_delimiter_star_line | tee --append ${OCS_LOGFILE}
   check_if_dev_busy $part
   echo $msg_delimiter_star_line
@@ -6767,7 +6767,7 @@ check_LVM_partition() {
   # if [ -n "$(file -Ls $part | grep -i "LVM" 2>/dev/null)" ]; then
   if [ -n "$(ocs-get-dev-info $part filesystem 2>/dev/null | grep -i "LVM")" ]; then
     return 0
-  else 
+  else
     return 1
   fi
 } # end of check_LVM_partition
@@ -6779,7 +6779,7 @@ save_logv() {
   local target="$1"  # target can be /dev/sda1, sda1, /dev/mapper/ocs_luks_XYO or ocs_luks_XYO
   local DEV VG UUID LOGV TF
   local image_name_ rc_save_logv FND_PV
-  # target_dir_fullpath is local (in function task_saveparts) global variable, since save_logv is used in function task_saveparts 
+  # target_dir_fullpath is local (in function task_saveparts) global variable, since save_logv is used in function task_saveparts
   PV_PARSE_CONF="$target_dir_fullpath/lvm_vg_dev.list"
   LOGV_PARSE_CONF="$target_dir_fullpath/lvm_logv.list"
   # if the report_msg is empty, put the initial one: image_name_
@@ -6793,7 +6793,7 @@ save_logv() {
   # Was using: LC_ALL=C pvscan 2>/dev/null 3<&- 4<&- | grep -Ew lvm2 | while read LINE; do
   # Run "man lvm.conf" and search "filter  — List of patterns to apply to devices found by a scan"
   # to see the "--config" option for filtering device
-  # Thanks to SLLabs Louis for the patch to that of Uditha De Silva. 
+  # Thanks to SLLabs Louis for the patch to that of Uditha De Silva.
   # Ref: http://sourceforge.net/p/clonezilla/discussion/Open_discussion/thread/075d3f5a/?limit=25#f533
   TF="devices { filter = [ 'a:(${target// /|})\$:', 'r:.*:' ] }"
   LC_ALL=C pvscan --config "$TF" 2>/dev/null 3<&- 4<&- | grep -Ew lvm2 | while read LINE; do
@@ -6840,7 +6840,7 @@ save_logv() {
     #copy_log "$target_dir_fullpath" "lvm"
     return 1
   fi
-  
+
   # We just want the LV in chosen target
   echo "Parsing logical volumes..." | tee --append $OCS_LOGFILE
   # (1) lvscan results without snapshots are like:
@@ -6879,10 +6879,10 @@ save_logv() {
       file_system="$(LC_ALL=C file -Ls $LOGV | awk -F":" '{print $2}')"
       echo "$LOGV $file_system" | tee -a $LOGV_PARSE_CONF
       break
-     fi 
+     fi
     done < $PV_PARSE_CONF
   done
-  
+
   # Backup the vg conf
   vgcfg_tmp="$(mktemp /tmp/vgcfg_tmp.XXXXXX)"
   echo "Saving the VG config... " | tee --append $OCS_LOGFILE
@@ -6932,11 +6932,11 @@ save_logv() {
    fn="$(to_ocs_dev_img_name $lv)"
    echo "Saving $lv as filename: $fn. $lv info: $fs" | tee --append $OCS_LOGFILE
    # skip swap or extended partition
-   case "$fs" in 
+   case "$fs" in
      *[Ss][Ww][Aa][Pp]*)
        output_swap_partition_uuid_label $lv "$target_dir_fullpath/swappt-$(to_filename ${fn}).info"
        continue ;;
-     *extended*) 
+     *extended*)
        continue ;;
    esac
    image_save $lv "$target_dir_fullpath" $fn
@@ -6954,8 +6954,8 @@ restore_logv() {
   local tgt_parts="$1"  # tgt_parts is like: sda1 sda2 sda5
   local mode="$2" # mode is unicast, multicast, d2d, bittorrent, or netcat_nuttcp
   local port="$3"
-  local volg is_in_chosen_partition lvm_tmp ipt lsrc_dev rc lv_corr_pt_his lv_corr_pt 
-  # target_dir_fullpath is local (in function task_saveparts) global variable, since restore_logv is used in function task_restoreparts 
+  local volg is_in_chosen_partition lvm_tmp ipt lsrc_dev rc lv_corr_pt_his lv_corr_pt
+  # target_dir_fullpath is local (in function task_saveparts) global variable, since restore_logv is used in function task_restoreparts
   # source_hd and target_hd are from ocs-onthefly.
   check_ocs_variables_if_fails_quit restore_logv \
   tgt_parts mode | tee --append $OCS_LOGFILE
@@ -7020,7 +7020,7 @@ restore_logv() {
     fi
   done < $PV_PARSE_CONF
   echo "done." | tee --append $OCS_LOGFILE
-  
+
   if [ -z "$(grep -v "/NOT_FOUND" $PV_PARSE_CONF 2>/dev/null)" ]; then
     [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
     echo "///WARNING/// The volume group setting is not found." | tee --append $OCS_LOGFILE
@@ -7067,7 +7067,7 @@ restore_logv() {
     rm -f "$lvm_tmp/lvm_$vg.conf"
     [ $rc -ne 0 ] && break
   done < $PV_PARSE_CONF
-  [ -d "$lvm_tmp" -a -n "$lvm_tmp" ] && rmdir $lvm_tmp 
+  [ -d "$lvm_tmp" -a -n "$lvm_tmp" ] && rmdir $lvm_tmp
   echo "done." | tee --append $OCS_LOGFILE
   if [ $rc -ne 0 ]; then
     echo "$msg_program_stop." | tee --append ${OCS_LOGFILE}
@@ -7076,7 +7076,7 @@ restore_logv() {
   fi
   #
   ocs-lvm2-start
-  
+
   if [ ! -e "$LOGV_PARSE_CONF" ]; then
     [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
     echo "///WARNING/// $(basename $LOGV_PARSE_CONF) not found." | tee --append $OCS_LOGFILE
@@ -7118,7 +7118,7 @@ restore_logv() {
     # Log the logical volume which is restored. The leading "/dev/" is removed, i.e. the results might be: lucid-server/root lucid-server/usr
     target_logv="$target_logv ${lv#/dev/*}"
     # create the swap if it's swap partition
-    case "$fs" in 
+    case "$fs" in
       *[Ss][Ww][Aa][Pp]*)
          echo $msg_delimiter_star_line
          echo "Found the swap partition $lv info, create it by:" | tee --append ${OCS_LOGFILE}
@@ -7136,7 +7136,7 @@ restore_logv() {
          mkswap $label_opt $uuid_opt $lv | tee --append ${OCS_LOGFILE}
          echo $msg_delimiter_star_line
          # then skip the rest.
-         continue;; 
+         continue;;
     esac
     echo "Restoring device $fn..." | tee --append $OCS_LOGFILE
     rc=""
@@ -7301,7 +7301,7 @@ feed_LVM_multicast() {
   LOGV_PARSE_CONF="$imagedir/$target_dir/lvm_logv.list"
   [ ! -f "$PV_PARSE_CONF" ] && exit 1
   [ ! -f "$LOGV_PARSE_CONF" ] && exit 1
-  
+
   # To avoid the stdin/stdout in ntfsclone/partimage/partclone (udp_send_part_img_or_dev $target_dir $fn $lv) conflict with "while read", here we use different file descriptor  (3)
   exec 3< $LOGV_PARSE_CONF
   while read -u 3 lv fs; do
@@ -7325,8 +7325,8 @@ feed_LVM_multicast() {
    # Convert to file name prefix, e.g. /dev/lucid-server/root -> lucid-server-root
    fn="$(to_ocs_dev_img_name $lv)"
    # Skip feeding swap
-   case "$fs" in 
-     *[Ss][Ww][Aa][Pp]*) continue;; 
+   case "$fs" in
+     *[Ss][Ww][Aa][Pp]*) continue;;
    esac
    if [ "$from_rawdev" != "yes" ]; then
      # From the image file, check if the file exists.
@@ -7370,7 +7370,7 @@ feed_bittorrent_LVM() {
   LOGV_PARSE_CONF="$imagedir/$target_dir/lvm_logv.list"
   [ ! -f "$PV_PARSE_CONF" ] && exit 1
   [ ! -f "$LOGV_PARSE_CONF" ] && exit 1
-  
+
   while read lv fs; do
     # Process the real data partition, only those in the chosen partitions
     # Ex:
@@ -7392,8 +7392,8 @@ feed_bittorrent_LVM() {
     # Convert to file name prefix, e.g. /dev/lucid-server/root -> lucid-server-root
     fn="$(to_ocs_dev_img_name $lv)"
     # Skip feeding swap
-    case "$fs" in 
-      *[Ss][Ww][Aa][Pp]*) continue;; 
+    case "$fs" in
+      *[Ss][Ww][Aa][Pp]*) continue;;
     esac
     if [ -z "$from_rawdev_opt" ]; then
       # from image, not from raw dev. Check BT slices dir.
@@ -7446,14 +7446,14 @@ stop_ocs_service() {
   local IP ihost
   local pxecfg grubcfg pxecfg_MAC grubcfg_MAC
   # By default this function kills drbl-ocs, but it can also be used to kill ocs-live-feed-img
-  local main_prog_def="drbl-ocs"  
+  local main_prog_def="drbl-ocs"
 
   while [ $# -gt 0 ]; do
     case "$1" in
       -m|--main-program)
            shift
            if [ -z "$(echo $1 |grep ^-.)" ]; then
-             # skip the -xx option, in case 
+             # skip the -xx option, in case
              main_prog="$1"
              shift
            fi
@@ -7472,14 +7472,14 @@ stop_ocs_service() {
   [ -z "$main_prog" ] && main_prog="$main_prog_def"
 
   # check if "ocsmgrd" is running ?
-  if [ ! -e "$ocs_lock_dir/clonezilla.lock" ]; then 
+  if [ ! -e "$ocs_lock_dir/clonezilla.lock" ]; then
     [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
     echo "OCS is not running!"
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     return 1
   fi
 
-  # HOST_OPTION_MODIFY: 
+  # HOST_OPTION_MODIFY:
   # Now clonezilla can not be multi-image, so it will be a mess if just
   # stop some clients. Therefore if "$LIST_HOST" = "on", we still stop
   # all the clonezilla process.
@@ -7488,7 +7488,7 @@ stop_ocs_service() {
     # affect the whole clients, BEGIN
     # From clonezilla 2.0, the ocs-srv-reset is almost useless. Comment it.
     #[ "$clean_client_all_ocs_related_srv" = "yes" ] && rm -f $RCX_ROOTDIR/rc[06].d/S05ocs-srv-reset
-    
+
     # Kill: (1) drbl-ocs/ocs-live-feed-img ($main_prog), (2) ocsmgrd, udpcast, partclone...
     # mcast_rawdev_zip_std is like "zstdmt -c", we just need the 1st one.
     mcast_srv_2_term="ocsmgrd udp-sender partclone\.[[:print:]]+"
@@ -7506,7 +7506,7 @@ stop_ocs_service() {
 
     # Stop BT-related services
     ocs-btsrv -b stop
-    
+
     # clean the tag
     rm -f $ocs_lock_dir/clonezilla.lock
     # affect the whole clients, END
@@ -7577,7 +7577,7 @@ stop_ocs_service() {
     #grubcfg_MAC="grub.cfg-drbl-""$pxecfg_MAC"
     #[ -f "$PXELINUX_DIR/$pxecfg_MAC" ] && rm -f $PXELINUX_DIR/$pxecfg_MAC
     #[ -f "$GRUB_EFINB_DIR/$grubcfg_MAC" ] && rm -f $GRUB_EFINB_DIR/$grubcfg_MAC
-    
+
     # remove the stalled ocs-run.param.
     rm -f $drblroot/$IP/etc/ocs/ocs-run.param
     if [ "$clean_client_all_ocs_related_srv" = "yes" ]; then
@@ -7628,7 +7628,7 @@ start_ocsmgrd_daemon() {
 
   # Before start the ocsmgrd, kill the stale one
   kill_ps_by_killall_9 ocsmgrd
-    
+
   [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
   echo "The status received by ocsmgrd will be saved to $ocs_log_dir/ocsmgrd-notify.log."
   [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
@@ -7639,10 +7639,10 @@ start_ocsmgrd_daemon() {
 } # end of start_ocsmgrd_daemon
 #
 # start ocs services
-# parameter: 
-#   task 
+# parameter:
+#   task
 #      "save" for saving the data to server
-#      "restore" for restoring the data from server  
+#      "restore" for restoring the data from server
 #   option
 #      "$target_image" for save/restore the partition /dev/hda1
 #      "$target_dir $target_hd" for save/restore the disk
@@ -7667,7 +7667,7 @@ start_ocs_service() {
       -t|--task)
          shift
          if [ -z "$(echo $1 |grep ^-.)" ]; then
-           # skip the -xx option, in case 
+           # skip the -xx option, in case
            task="$1"
            shift
          fi
@@ -7676,7 +7676,7 @@ start_ocs_service() {
       -o|--tag-option)
          shift
          if [ -z "$(echo $1 |grep ^-.)" ]; then
-           # skip the -xx option, in case 
+           # skip the -xx option, in case
            tag_option="$1"
            shift
          fi
@@ -7691,7 +7691,7 @@ start_ocs_service() {
       -n|--n-clients)
          shift
          if [ -z "$(echo $1 |grep ^-.)" ]; then
-           # skip the -xx option, in case 
+           # skip the -xx option, in case
            n_clients="$1"
            shift
          fi
@@ -7707,11 +7707,11 @@ start_ocs_service() {
     # maybe it will be ask_user, if so, change it as choose later
     tgt_img_menu="$(echo "$tgt_img_menu" | sed -e "s/ask_user/(choose later)/g")"
     tgt_dev_menu="$(echo "$tgt_dev_menu" | sed -e "s/ask_user/(choose later)/g")"
-    
+
     echo "clonezilla.lock dir: $ocs_lock_dir"
     # Create the ocs_lock_dir if it does not exist
     [ ! -d "$ocs_lock_dir" ] && mkdir -p $ocs_lock_dir
-    
+
     # Is "ocsmgrd" running ?
     if [ -e "$ocs_lock_dir/clonezilla.lock" ]; then
       [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
@@ -7720,28 +7720,28 @@ start_ocs_service() {
       # We do not have to generate SSI files in stop_ocs_service, since later the files will be created.
       stop_ocs_service no
     fi
-    
+
     if [ ! -e "$SYSCONF_PATH/$DHCP_SRV_NAME" ]; then
       [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
       echo "You must setup DRBL first. Check http://drbl.org or http://drbl.nchc.org.tw for more details."
       [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     fi
-    
+
     # Warning if range option is used in dhcpd.conf
     check_dhcpd_if_range
-    
+
     # restart nfs to make sure stalled NFS is cleaned.
     [ "$nfs_restart" != "no" ] && do_nfs_restart
-    
+
     # Loading the mode when drblpush, we need to know if it's clonezilla_box_mode
     # This only necessary in clonezilla server, since /etc/drbl/drbl_deploy.conf does not exist in client.
     . /etc/drbl/drbl_deploy.conf
-    
+
     # From clonezilla 2.0, the ocs-srv-reset is almost useless. Comment it.
     # make sure next time when server boots, it is NOT in ocs mode
     #( cd $RCX_ROOTDIR/rc0.d/; ln -fs $RCX_REL_INITD/ocs-srv-reset S05ocs-srv-reset )
     #( cd $RCX_ROOTDIR/rc6.d/; ln -fs $RCX_REL_INITD/ocs-srv-reset S05ocs-srv-reset )
-    
+
     # (1) set the UDP port for multicast
     # (2) get the multicast ethernet port $eth_for_multicast
     if [ -n "$(echo "$task" | grep -e "^multicast_restore")" ]; then
@@ -7761,7 +7761,7 @@ start_ocs_service() {
         read
       fi
     fi
-    
+
     # HOST_OPTION_MODIFY: modified since we specify hosts.
     # Note! We can not use "for ihost in $drblroot/*; do" since we have to create every pxelinux config for client. If we use that, it will fail in DRBL SSI and Clonezilla box.
     # nb_conf_trigger is the flag to see if the network boot config files (for both PXE and GRUB, i.e. /tftpboot/nbi_img/pxelinux.cfg/{default,01-$MAC,...} and /tftpboot/nbi_img/grub/grub.cfg-drbl-*) need to be updated for every IP address or not.
@@ -7774,10 +7774,10 @@ start_ocs_service() {
       echo "Starting the OCS service for node IP add. = $node_ip"
       prep_client_inittab_rc_srv $node_ip $task "$tag_option"
     done
-    
+
     # Set the single user mode password if not setting for client...This will be safer..."
     set_clients_rc1_passwd $IP_LIST
-    
+
     # make client to boot in drbl mode with menu label specified.
     case "$task" in
       "saveparts")
@@ -7806,7 +7806,7 @@ start_ocs_service() {
          ;;
        *)
     esac
-    
+
     # First, set the pxe menu to Clonezilla:..., since maybe it's in drbl mode. If -y0 is set, later we will switch the default menu to local.
     if [ "$diskless_client_os" = "clonezilla-live" ]; then
       force_pxe_clients_boot_label Clonezilla-live "$clonezilla_client_menu_label_prefix: $ocs_menu_label"
@@ -7818,7 +7818,7 @@ start_ocs_service() {
       add_runlevel_1_in_pxelinux_cfg_block clonezilla
       add_runlevel_1_in_grub_efi_cfg_block clonezilla-se-client
     fi
-    
+
     # If the mode is in always_restore, and PXE default menu is assigned to local (-y0), we will set local boot as default. Since the always_restore mode is only useful with local OS exists. But if in some scenario, such as production clone flow, maybe pxe_menu_default_mode=clone is useful, since a lot of hardisks will be replaced one by one.
     if [ "$always_restore" = "yes" ]; then
      case "$pxe_menu_default_mode" in
@@ -7845,9 +7845,9 @@ start_ocs_service() {
   # set udpcast holding option
   if [ -n "$(echo "$task" | grep -e "^multicast_restore")" ]; then
     # prepare the multicast option
-    [ -n "$mcast_wait_time" ] && udpcast_hold_opt1="--min-wait $mcast_wait_time" 
+    [ -n "$mcast_wait_time" ] && udpcast_hold_opt1="--min-wait $mcast_wait_time"
     [ -n "$n_clients" ] && udpcast_hold_opt2="--min-clients $n_clients"
-    [ -n "$mcast_max_wait_time" ] && udpcast_hold_opt3="--max-wait $mcast_max_wait_time" 
+    [ -n "$mcast_max_wait_time" ] && udpcast_hold_opt3="--max-wait $mcast_max_wait_time"
     if [ -z "$udpcast_hold_opt1" -a -z "$udpcast_hold_opt2" -a -z "$udpcast_hold_opt3" ]; then
       echo "No time_to_wait, clients_to_wait or clients+time_to_wait option was found." | tee --append ${OCS_LOGFILE}
       echo "$msg_program_stop!" | tee --append ${OCS_LOGFILE}
@@ -8057,10 +8057,10 @@ prep_client_inittab_rc_srv() {
 
   case "$ocs_client_trig_type" in
     ocs-run.param)
-      # NOTE! This mode will _NOT_ work in Clonezilla box, and _NOT_ in 
-      # clonezilla_live mode, only for full clonezilla mode. 
-      # Since we will not regen the SSI template 
-      # after drbl-ocs is run. We always set ocs_client_trig_type=both 
+      # NOTE! This mode will _NOT_ work in Clonezilla box, and _NOT_ in
+      # clonezilla_live mode, only for full clonezilla mode.
+      # Since we will not regen the SSI template
+      # after drbl-ocs is run. We always set ocs_client_trig_type=both
       # in drbl-ocs.conf.
       # The reason we keep this mode is that it's easier for us to debug
       # in full drbl/clonezilla mode.
@@ -8237,16 +8237,16 @@ get_target_dir_name_when_saving() {
     target_dir="$(cat $ANS_TMP)"
     # if [ "$target_dir" = "ask_user" ]; then
     #   $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-    #  --msgbox "$msg_ask_user_is_reserved_for_save_mode\n$msg_please_do_it_again!!!" 0 0 
+    #  --msgbox "$msg_ask_user_is_reserved_for_save_mode\n$msg_please_do_it_again!!!" 0 0
     # elif [ "$target_dir" = "autoname" ]; then
     #    $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-    #   --msgbox "$msg_autoname_is_reserved_for_save_mode\n$msg_please_do_it_again!!!" 0 0 
+    #   --msgbox "$msg_autoname_is_reserved_for_save_mode\n$msg_please_do_it_again!!!" 0 0
     # elif [ "$target_dir" = "autohostname" ]; then
     #    $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-    #   --msgbox "$msg_autohostname_is_reserved_for_save_mode\n$msg_please_do_it_again!!!" 0 0 
+    #   --msgbox "$msg_autohostname_is_reserved_for_save_mode\n$msg_please_do_it_again!!!" 0 0
     # elif [ "$target_dir" = "autoproductname" ]; then
     #    $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-    #   --msgbox "$msg_autoproductname_is_a_reserved\n$msg_please_do_it_again!!!" 0 0 
+    #   --msgbox "$msg_autoproductname_is_a_reserved\n$msg_please_do_it_again!!!" 0 0
     if [ -n "$target_dir" ]; then
        ASK_IMG_NAME=0
     fi
@@ -8380,7 +8380,7 @@ get_target_dir_name_when_converting_img() {
       -o|--only)
          shift
          if [ -z "$(echo $1 |grep ^-.)" ]; then
-           # skip the -xx option, in case 
+           # skip the -xx option, in case
            only_type="$1"
            shift
          fi
@@ -8432,7 +8432,7 @@ rm_tmp_cnvt_img() {
   if [ "$img_cnvt_count" -ge "1" ]; then
     if [ -d "$ocsroot/${target_dir}" -a \
          -n "$(echo "$target_dir" | grep -i "tmp-cnvted")" ]; then
-      rm -rf "$ocsroot/${target_dir}" 
+      rm -rf "$ocsroot/${target_dir}"
     fi
   fi
 } # end of rm_tmp_cnvt_img
@@ -8526,7 +8526,7 @@ create_temp_image_for_different_target_dev_name_if_necessary() {
   fi
   if [ -d "$ocsroot/${target_dir}-tmp-cnvted" -a \
        -n "${target_dir}-tmp-cnvted" ]; then
-    rm -rf "$ocsroot/${target_dir}-tmp-cnvted" 
+    rm -rf "$ocsroot/${target_dir}-tmp-cnvted"
   fi
   cnvt_cmd_="create-ocs-tmp-img -or $ocsroot $tmp_img_from_to_opt \"$target_dir\" \"${target_dir}-tmp-cnvted\" $dsksname_from_img $dest_dev_"
   echo "Running: $cnvt_cmd_"
@@ -8555,13 +8555,13 @@ check_mbr_gpt_partition_table() {
   # sgdisk -v /dev/sda
   # Invalid partition data!
   # Verification may miss some problems or report too many!
-  # 
+  #
   # Warning! Mismatched GPT and MBR partition! MBR partition 1, of type 0x83,
   # has no corresponding GPT partition! You may continue, but this condition
   # might cause data loss in the future!
-  # 
+  #
   # Identified 1 problems!
-  # 
+  #
   if ! type sgdisk &>/dev/null; then
     echo "Program sgdisk not found! Skip checking MBR and GPT partition table!" | tee --append ${OCS_LOGFILE}
     return 3
@@ -8650,7 +8650,7 @@ task_savedisk() {
   if [ "$target_dir" = "ask_user" ]; then
     get_target_dir_name_when_saving
   fi
-   
+
   if [ "$target_hd" = "ask_user" ]; then
     get_target_hd_name_from_local_machine "$msg_local_source_disk \n$msg_linux_disk_naming $msg_press_space_to_mark_selection"
   fi
@@ -8658,7 +8658,7 @@ task_savedisk() {
   # check if the device exists
   ANS_TMP=`mktemp /tmp/ocs_chkdev.XXXXXX`
   trap "[ -f "$ANS_TMP" ] && rm -f $ANS_TMP" HUP INT QUIT TERM EXIT
-  check_if_input_device_exist $ANS_TMP $target_hd 
+  check_if_input_device_exist $ANS_TMP $target_hd
   target_hd="$(cat $ANS_TMP | tr -d \")"
   [ -f "$ANS_TMP" ] && rm -f $ANS_TMP
 
@@ -8681,7 +8681,7 @@ task_savedisk() {
     rm -f $part_rec_f
   fi
 
-  # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition, 
+  # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition,
   # instead it's on a disk (e.g. /dev/sdb).
   pv_on_dsk="$(get_pv_on_disk_from_local_machine)"  # pv_on_dsk: sda, sdb...
   for ip in $pv_on_dsk; do
@@ -8719,7 +8719,7 @@ task_savedisk() {
   # Let task_saveparts do the real job. However, we do not generate MD5SUMS/SHA1SUMS/B2SUMS... in task_saveparts, since there are some files will be created later. We will generate them in the end of this function.
   # Save checksum status
   for imtd in $checksum_method_for_img; do
-    # e.g., gen_md5sum_status="$gen_md5sum" 
+    # e.g., gen_md5sum_status="$gen_md5sum"
     eval gen_${imtd}_status="\$gen_${imtd}"
   done
   # Set checksum flag to no
@@ -8730,7 +8730,7 @@ task_savedisk() {
 
   task_saveparts "$target_dir" "$target_parts"
   rc_task_savedisk="$(($rc_task_savedisk + $?))"
-  
+
   # Restore checksum flag
   for imtd in $checksum_method_for_img; do
     # e.g., gen_md5sum="$gen_md5sum_status"
@@ -8784,24 +8784,24 @@ save_part_table_mbr_dm_info(){
   #
   # lsblk output example:
   #  NAME                              MAJ:MIN RM   SIZE RO TYPE   MOUNTPOINT
-  #  sdb                                 8:16   0 931.5G  0 disk   
-  #  └─isw_jdbgiifhb_Volume0 (dm-0)    254:0    0   1.8T  0 dmraid 
-  #    ├─isw_jdbgiifhb_Volume01 (dm-1) 254:1    0   244M  0 dmraid 
-  #    └─isw_jdbgiifhb_Volume05 (dm-3) 254:3    0   1.8T  0 dmraid 
-  #      ├─sars--007-root (dm-2)       254:2    0   1.8T  0 lvm    
-  #      └─sars--007-swap_1 (dm-4)     254:4    0   3.9G  0 lvm    
-  #  sda                                 8:0    0 931.5G  0 disk   
-  #  ├─sda1                              8:1    0   244M  0 part   
-  #  ├─sda2                              8:2    0     1K  0 part   
-  #  └─isw_jdbgiifhb_Volume0 (dm-0)    254:0    0   1.8T  0 dmraid 
-  #    ├─isw_jdbgiifhb_Volume01 (dm-1) 254:1    0   244M  0 dmraid 
-  #    └─isw_jdbgiifhb_Volume05 (dm-3) 254:3    0   1.8T  0 dmraid 
-  #      ├─sars--007-root (dm-2)       254:2    0   1.8T  0 lvm    
-  #      └─sars--007-swap_1 (dm-4)     254:4    0   3.9G  0 lvm    
-  #  sdc                                 8:32   1   3.7G  0 disk   
-  #  └─sdc1                              8:33   1   3.7G  0 part   
-  #  sr0                                11:0    1  1024M  0 rom    
-  #  loop0                               7:0    0  88.3M  1 loop   
+  #  sdb                                 8:16   0 931.5G  0 disk
+  #  └─isw_jdbgiifhb_Volume0 (dm-0)    254:0    0   1.8T  0 dmraid
+  #    ├─isw_jdbgiifhb_Volume01 (dm-1) 254:1    0   244M  0 dmraid
+  #    └─isw_jdbgiifhb_Volume05 (dm-3) 254:3    0   1.8T  0 dmraid
+  #      ├─sars--007-root (dm-2)       254:2    0   1.8T  0 lvm
+  #      └─sars--007-swap_1 (dm-4)     254:4    0   3.9G  0 lvm
+  #  sda                                 8:0    0 931.5G  0 disk
+  #  ├─sda1                              8:1    0   244M  0 part
+  #  ├─sda2                              8:2    0     1K  0 part
+  #  └─isw_jdbgiifhb_Volume0 (dm-0)    254:0    0   1.8T  0 dmraid
+  #    ├─isw_jdbgiifhb_Volume01 (dm-1) 254:1    0   244M  0 dmraid
+  #    └─isw_jdbgiifhb_Volume05 (dm-3) 254:3    0   1.8T  0 dmraid
+  #      ├─sars--007-root (dm-2)       254:2    0   1.8T  0 lvm
+  #      └─sars--007-swap_1 (dm-4)     254:4    0   3.9G  0 lvm
+  #  sdc                                 8:32   1   3.7G  0 disk
+  #  └─sdc1                              8:33   1   3.7G  0 part
+  #  sr0                                11:0    1  1024M  0 rom
+  #  loop0                               7:0    0  88.3M  1 loop
   if type lsblk &>/dev/null; then
     if grep -qE "dm-[[:digit:]]+" /proc/partitions; then
       echo "Dumping the device mapper table in $target_dir_fullpath/dmraid.table..." | tee --append $OCS_LOGFILE
@@ -8871,11 +8871,11 @@ save_part_table_mbr_dm_info(){
       # Disk /dev/hda: 16777215s
       # Sector size (logical/physical): 512B/512B
       # Partition Table: gpt
-      # 
-      # Number  Start     End        Size       File system  Name     Flags  
+      #
+      # Number  Start     End        Size       File system  Name     Flags
       #  1      34s       409640s    409607s    fat32        primary  msftres
-      #  2      409641s   4316406s   3906766s   ext2         primary         
-      #  3      4316407s  15625000s  11308594s  reiserfs     primary         
+      #  2      409641s   4316406s   3906766s   ext2         primary
+      #  3      4316407s  15625000s  11308594s  reiserfs     primary
       # --------------------
       echo "Saving the secondary GPT of $ihd as $target_dir_fullpath/$(to_filename ${ihd})-gpt-2nd by dd..." | tee --append ${OCS_LOGFILE}
       disk_size_sec="$(LC_ALL=C grep -E "^Disk /dev/" $target_dir_fullpath/$(to_filename ${ihd})-pt.parted | awk -F":" '{print $2}' | sed -e "s/s$//g")"
@@ -8937,7 +8937,7 @@ save_part_table_mbr_dm_info(){
     else
       # Disk with no GPT or MBR partition.
       # In this case, sfdisk should fail to save the partition table, but if PV on a disk, not partition.
-      # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition, 
+      # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition,
       pv_on_dsk="$(get_pv_on_disk_from_local_machine)"
       pv_on_dsk_flag="false"
       for ip in $pv_on_dsk; do
@@ -8961,7 +8961,7 @@ save_part_table_mbr_dm_info(){
   done
   echo "done!"
 
-  # save the mbr 
+  # save the mbr
   for ihd in $target_hd; do
     # Ref: http://en.wikipedia.org/wiki/Master_boot_record
     # Master Boot Record (MBR) is the 512-byte boot sector:
@@ -9000,7 +9000,7 @@ task_saveparts() {
   if [ "$target_dir" = "ask_user" ]; then
     get_target_dir_name_when_saving  # get $target_dir
   fi
-   
+
   # set absolute path, i.e. put leading $ocsroot.
   target_dir_fullpath="$ocsroot/$target_dir"
 
@@ -9059,7 +9059,7 @@ task_saveparts() {
   get_dev_model_shown "$dev_to_be_saved_shown_in_warning"
   if [ "$ocs_batch_mode" != "on" ]; then
     # Interactive mode, need to confirm
-    countdown_or_confirm_before_save "$target_dir_fullpath" 
+    countdown_or_confirm_before_save "$target_dir_fullpath"
   fi
 
   # Check if the image repository is writable.
@@ -9267,7 +9267,7 @@ task_saveparts() {
     fi
   done
 
-  # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition, 
+  # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition,
   # instead it's on a disk (e.g. /dev/sdb).
   # Although there is a checking in task_savedisk function, but this is for "saveparts" option.
   pv_on_dsk="$(get_pv_on_disk_from_local_machine)"  # pv_on_dsk: sda, sdb...
@@ -9290,7 +9290,7 @@ task_saveparts() {
     save_logv "$target_parts"
     rc_savepts="$(($rc_savepts + $?))"
   fi
-  
+
   if [ "$do_LUKS_save" = "yes" ]; then
     save_luks_dev_fs $clted_luks_devs_map_sv
     rc_savepts="$(($rc_savepts + $?))"
@@ -9305,7 +9305,7 @@ task_saveparts() {
   save_part_table_mbr_dm_info
 
   # Save EFI NVRAM info. What we need is actually the label
-  # Only if dir /sys/firmware/efi/efivars exists, the data exist in EFI NVRAM 
+  # Only if dir /sys/firmware/efi/efivars exists, the data exist in EFI NVRAM
   if [ -d "/sys/firmware/efi/efivars" ]; then
     LC_ALL=C efibootmgr -v 2>/dev/null > "$target_dir_fullpath/efi-nvram.dat"
   fi
@@ -9323,7 +9323,7 @@ task_saveparts() {
   return $rc_savepts
 } # end of task_saveparts
 
-# task "restoredisk" 
+# task "restoredisk"
 # parameter:
 #   $1 target_image
 #   $2 target_hd
@@ -9372,7 +9372,7 @@ task_restoredisk() {
     fi
     ;;
   esac
-  
+
   # Check MD5SUMS, SHA1SUMS before the image is converted in case
   chk_checksum_for_img_flag=""
   check_checksums_for_img "$ocsroot/$target_dir"
@@ -9397,7 +9397,7 @@ task_restoredisk() {
     done
   done
 
-  # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition, 
+  # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition,
   # instead it's on a disk (e.g. /dev/sdb).
   pv_on_dsk="$(get_pv_on_disk_from_PV_conf_list "$ocsroot/$target_dir/lvm_vg_dev.list")"
   for ip in $pv_on_dsk; do
@@ -9427,7 +9427,7 @@ task_restoredisk() {
   echo "End of restoredisk job for image $target_dir." | tee --append $OCS_LOGFILE
 } # end of task_restoredisk
 
-# task "multicast_restoredisk" 
+# task "multicast_restoredisk"
 # parameter:
 #   $1 port
 #   $2 target_dir
@@ -9450,7 +9450,7 @@ task_multicast_restoredisk() {
   task_restoredisk "$target_dir" "$target_hd" "$port"
 } # end of task_multicast_restoredisk
 
-# task "bt_restoredisk" 
+# task "bt_restoredisk"
 # parameter:
 #   $1 port
 #   $2 target_dir
@@ -9472,7 +9472,7 @@ task_bt_restoredisk() {
   task_restoredisk "$target_dir" "$target_hd" "$port"
 } # end of task_bt_restoredisk
 #
-# task "bt_restoreparts" 
+# task "bt_restoreparts"
 # parameter:
 #   $1 port
 #   $2 target_dir
@@ -9528,9 +9528,9 @@ task_d2d_restoreparts() {
     target_parts="$(get_mapped_kernel_or_ocs_blkname "$target_parts")"
   fi
   task_restoreparts "$target_dir" "$target_parts" "$port"
-} # end of task_d2d_restoreparts 
+} # end of task_d2d_restoreparts
 
-# task "restoreparts" 
+# task "restoreparts"
 # parameter:
 #   $1 target_image
 #   $2 target_parts (hda1, hda2...)
@@ -9679,7 +9679,7 @@ task_restoreparts() {
   target_dir_fullpath="$ocsroot/$target_dir"
   check_input_target_image "$target_dir_fullpath"
 
-  # turn on hd dma 
+  # turn on hd dma
   for ihd in $target_hd; do
     check_specify_hd_exists $ihd
     [ "$force_dma_on" = "yes" ] && turn_on_hd_dma /dev/$ihd
@@ -9687,9 +9687,9 @@ task_restoreparts() {
   screen_not_blank
   active_proc_partitions
 
-  # if $create_part (global variable) is no, only some preparations 
+  # if $create_part (global variable) is no, only some preparations
   # in create_partition, it won't run sfdisk in fact.
-  
+
   # strip the leading spaces
   target_parts="$(echo $target_parts | sed -r -e "s/^[[:space:]]*//g")"
   # countdown or wait for confirm
@@ -9698,7 +9698,7 @@ task_restoreparts() {
     # To restore partition(s) only
     dev_to_be_overwrite="$target_parts"
   else
-    # To restore a disk, we will erase the whole data in the disk, so list partition(s), too 
+    # To restore a disk, we will erase the whole data in the disk, so list partition(s), too
     # Find the existing partition(s) in the system.
     gen_proc_partitions_map_file
     if [ -n "$target_hd" ]; then
@@ -9709,10 +9709,10 @@ task_restoreparts() {
   fi
   # get_dev_model_shown will give $dev_model_shown
   # Only show this when not in batch mode
-  [ "$ocs_batch_mode" != "on" ] && get_dev_model_shown "$dev_to_be_overwrite" 
+  [ "$ocs_batch_mode" != "on" ] && get_dev_model_shown "$dev_to_be_overwrite"
   countdown_or_confirm_before_restore "$target_dir_fullpath" "$target_hd $target_parts"
 
-  # check if it's spawned by clonezilla server 
+  # check if it's spawned by clonezilla server
   is_spawned_by_drbl_ocs $ocs_ppid
   rc=$?
   if [ "$rc" -gt 0 -a "$ocs_batch_mode" != "on" ]; then
@@ -9886,7 +9886,7 @@ task_restoreparts() {
     # checkInodeForDevice /dev/$partition
     # Before we start to clone, check if kernel can find /dev/$partition
     check_specify_part_exists $partition
-    case "$net_mode" in 
+    case "$net_mode" in
      "unicast")
         do_unicast_stdin_restore "$target_dir_fullpath" $partition /dev/$partition
         rc="$?"
@@ -10033,7 +10033,7 @@ task_restoreparts() {
   # Strip the leading spaces
   processed_extended_parts="$(echo $processed_extended_parts | sed -r -e "s|^[[:space:]]*||g")"
 
-  # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition, 
+  # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition,
   # instead it's on a disk (e.g. /dev/sdb).
   pv_on_dsk="$(get_pv_on_disk_from_PV_conf_list "$PV_PARSE_CONF")"
   for ip in $pv_on_dsk; do
@@ -10153,13 +10153,13 @@ task_restoreparts() {
        fn="$(to_ocs_dev_img_name $lv)"
        # Log the logical volume which is restored. The leading "/dev/" is removed, i.e. the results might be: lucid-server/root lucid-server/usr
        target_logv="$target_logv ${lv#/dev/*}"
-       case "$fs" in 
+       case "$fs" in
          *[Ss][Ww][Aa][Pp]*)
             echo $msg_delimiter_star_line
             echo "Found the swap partition $lv info. No need to check."
             echo $msg_delimiter_star_line
             # then skip the rest.
-            continue;; 
+            continue;;
        esac
        echo "Inspecting files in device /dev/$fn..." | tee --append $OCS_LOGFILE
        echo $msg_delimiter_star_line | tee --append ${OCS_LOGFILE}
@@ -10202,7 +10202,7 @@ task_restoreparts() {
   # Update initramfs here
   if [ "$do_update_initrd" = "yes" ]; then
     grub_cand_parts="$target_parts $processed_extended_parts"
-    if [ -z "$grub_partition" ]; then 
+    if [ -z "$grub_partition" ]; then
       # E.g., restoreparts so there is no grub_partition assigned.
       # Since option "-p" is used, this won't modify any unrelated partition.
       grub_partition="auto"
@@ -10219,7 +10219,7 @@ task_restoreparts() {
     echo $msg_delimiter_star_line | tee --append $OCS_LOGFILE
   fi
 
-  # 
+  #
   # Reinstall whole MBR (512 bytes)
   if [ "$dump_mbr_in_the_end" = "yes" ]; then
     turn_off_swap_and_LVM2 $target_hd
@@ -10282,7 +10282,7 @@ task_restoreparts() {
 
 } # end of task_restoreparts
 
-# task "multicast_restoreparts" 
+# task "multicast_restoreparts"
 # parameter:
 #   $1 port
 #   $2 target_dir
@@ -10307,7 +10307,7 @@ task_multicast_restoreparts() {
 }
 
 check_boot_kernel_arg_cmdline() {
-  # The mode assigned when client boots, if this is assigned, 
+  # The mode assigned when client boots, if this is assigned,
   # it will overide the mode assigned by server
   if grep -i -q "drbl_ocs=disallow" /proc/cmdline; then
     [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
@@ -10330,7 +10330,7 @@ kill_ps_by_kill_9() {
       -x|--exclude)
            shift
            if [ -z "$(echo $1 |grep ^-.)" ]; then
-             # skip the -xx option, in case 
+             # skip the -xx option, in case
              exclude_pids="$1"
              shift
            fi
@@ -10459,11 +10459,11 @@ do_startdisk() {
     fi
 
     # start
-    if [ -z "$target_image" -o "$target_image" = "$imagedir/" -o -z "$target_hd" ]; then 
+    if [ -z "$target_image" -o "$target_image" = "$imagedir/" -o -z "$target_hd" ]; then
       [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
       echo "You didn't specify which file or disk to $task"
       [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
-      exit 1 
+      exit 1
     fi
 
     case "$task" in
@@ -10494,7 +10494,7 @@ do_startdisk() {
     [ -n "$n_clients" ] && mcast_client_no_opt="-n $n_clients"
 
     echo start_ocs_service $mcast_client_no_opt -t $task"disk" -o "$target_image $target_hd"
-    start_ocs_service $mcast_client_no_opt -t $task"disk" -o "$target_image $target_hd" 
+    start_ocs_service $mcast_client_no_opt -t $task"disk" -o "$target_image $target_hd"
 } # end of do_startdisk
 
 #
@@ -10570,7 +10570,7 @@ do_startparts () {
              ANS_TMP=`mktemp /tmp/ocs_ans.XXXXXX`
              trap "[ -f "$ANS_TMP" ] && rm -f $ANS_TMP" HUP INT QUIT TERM EXIT
              get_existing_partitions_from_img $ANS_TMP $imagedir/$target_image no restore
-             # we have to remove " (comes with checklist in dialog) 
+             # we have to remove " (comes with checklist in dialog)
              # so that for loop will work (Specially for FC3/4...)
              target_parts="$(cat $ANS_TMP | tr -d \")"
              [ -e "$ANS_TMP" ] && rm -f $ANS_TMP
@@ -10586,7 +10586,7 @@ do_startparts () {
            ANS_TMP=`mktemp /tmp/ocs_ans.XXXXXX`
            trap "[ -f "$ANS_TMP" ] && rm -f $ANS_TMP" HUP INT QUIT TERM EXIT
            get_existing_partitions_from_img $ANS_TMP $imagedir/$target_image no restore
-           # we have to remove " (comes with checklist in dialog) 
+           # we have to remove " (comes with checklist in dialog)
            # so that for loop will work (Specially for FC3/4...)
            target_parts="$(cat $ANS_TMP | tr -d \")"
            [ -e "$ANS_TMP" ] && rm -f $ANS_TMP
@@ -10597,11 +10597,11 @@ do_startparts () {
     fi
 
     #
-    if [ -z "$target_image" -o "$target_image" = "$imagedir/" -o -z "$target_parts" ]; then 
+    if [ -z "$target_image" -o "$target_image" = "$imagedir/" -o -z "$target_parts" ]; then
       [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
       echo "You didn't specify which file or partitions to $task"
       [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
-      exit 1 
+      exit 1
     fi
 
     case "$task" in
@@ -10630,8 +10630,8 @@ do_startparts () {
 
     #
     [ -n "$n_clients" ] && mcast_client_no_opt="-n $n_clients"
-    echo start_ocs_service $mcast_client_no_opt -t $task"parts" -o "$target_image $target_parts" 
-    start_ocs_service $mcast_client_no_opt -t $task"parts" -o "$target_image $target_parts" 
+    echo start_ocs_service $mcast_client_no_opt -t $task"parts" -o "$target_image $target_parts"
+    start_ocs_service $mcast_client_no_opt -t $task"parts" -o "$target_image $target_parts"
 } # end of do_startparts
 
 #
@@ -10768,14 +10768,14 @@ check_ocs_input_params(){
   fi
   # convert 05/006... to 5, 6, also make it as integer
   VOL_LIMIT="$(LC_ALL=C echo "scale=0; $VOL_LIMIT / 1" | bc -l)"
-  
+
   if [ "$USE_NTFSCLONE" = "yes" ] && ! type lzop &>/dev/null; then
     [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
     echo "lzop is NOT found in this server, we will use the default compression program (gzip)."
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     IMG_CLONE_CMP="gzip -c $extra_gzip_opt"
   fi
-  
+
   more_compress_progs="lzma xz lzip plzip lrzip lz4 zstd zstdmt"
   for i in $more_compress_progs; do
     eval iz=\$i
@@ -10787,7 +10787,7 @@ check_ocs_input_params(){
         [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
         IMG_CLONE_CMP="gzip -c $extra_gzip_opt"
       fi
-      
+
       if [ "$USE_PARTCLONE" != "yes" ]; then
         # Since new file name format is only for partclone, if user, say, choose partimage + $iz, the created partition image file is like: hda1.aa, hda1.ab... If we use "file -Ls hda1.aa", it will only show "data", and the restoration will fail since there is no way to know the compression format. Either file name or file magic are not available.
         [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
@@ -10797,14 +10797,14 @@ check_ocs_input_params(){
       fi
     fi
   done
-  
+
   if [ -n "$TIME_to_wait" -a -z "`echo "$TIME_to_wait" | grep "[0-9].*"`" ]; then
     [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
     echo "\"$TIME_to_wait\" is NOT a valid time for wait-time! $msg_program_stop!"
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     exit 1
   fi
-  
+
   # check grub_partition if we want to install grub
   if [ "$install_grub" = "on" ]; then
     if ! is_supported_dev "$grub_partition" && [ "$grub_partition" != "auto" ]; then
@@ -10981,10 +10981,10 @@ check_if_source_dev_busy_before_saving() {
           y|[yY][eE][sS])
                         rm_dir_confirm="yes"
                         ;;
-          *) 
+          *)
                         rm_dir_confirm="no"
                         ;;
-      esac 
+      esac
       [ "$rm_dir_confirm" = "yes" ] && rm -rfv $img_name
     fi
     echo "done."              | tee --append ${OCS_LOGFILE}
@@ -11009,7 +11009,7 @@ check_if_dev_busy() {
 } # end of check_if_dev_busy
 #
 check_if_disk_busy() {
-  # Check disk is busy or not. E.g. 
+  # Check disk is busy or not. E.g.
   # /dev/sda is busy due to /dev/sda1 is mounted.
   # /dev/cciss/c0d0 is busy due to /dev/cciss/c0d0p1 is mounted.
   # /dev/mmcblk0 is busy due to /dev/mmcblk0p1 is mounted.
@@ -11046,7 +11046,7 @@ check_if_disk_busy() {
 } # end of check_if_disk_busy
 #
 check_if_disk_busy_before_create_partition() {
-  # Check disk is busy or not. E.g. 
+  # Check disk is busy or not. E.g.
   # /dev/sda is busy due to /dev/sda1 is mounted.
   # /dev/cciss/c0d0 is busy due to /dev/cciss/c0d0p1 is mounted.
   # /dev/mmcblk0 is busy due to /dev/mmcblk0p1 is mounted.
@@ -11071,9 +11071,9 @@ check_if_disk_busy_before_create_partition() {
 } # end of check_if_disk_busy_before_create_partition
 #
 is_spawned_by_drbl_ocs() {
-  local ppid_="$1" 
+  local ppid_="$1"
   local rc
-  # 2 cases: 
+  # 2 cases:
   # (1) Clonezilla live-based Clonezilla SE (where ocs_server=$IP is assigned)
   # (2) NFS-root based Clonezilla SE
   if [ -n "$(LC_ALL=C grep -iE ocs_server /proc/cmdline)" ]; then
@@ -11145,7 +11145,7 @@ convert_ocs_format_from_1.5_to_2.0_or_newer() {
     elif [ -f "$img_path/parts" ]; then
       # This is for image from saveparts
       # we need get disk name: hda1 hda2 hda3 -> hda
-      # we choose the first one in partitions to convert, since in old format, when image of partitions exists, 
+      # we choose the first one in partitions to convert, since in old format, when image of partitions exists,
       tgt_hd_tmp="$(get_parts_list_from_img $img_path | awk -F" " '{print $1}')"
       hd_dev="$(get_diskname $tgt_hd_tmp)"
     fi
@@ -11190,7 +11190,7 @@ set_boot_loader() {
      echo "FAT, use syslinux as boot loader."
      boot_loader=syslinux
      ;;
-  *) 
+  *)
      echo "Not FAT, use grub as boot loader."
      boot_loader=grub
      ;;
@@ -11215,7 +11215,7 @@ choose_language_in_fb_term() {
  # read the setting if exists
  [ -e "/etc/ocs/ocs-live.conf" ] && . /etc/ocs/ocs-live.conf
  if [ -z "$ocs_lang" ]; then
-   if [ -e /dev/fb/0 ] || [ -e /dev/fb0 ]; then 
+   if [ -e /dev/fb/0 ] || [ -e /dev/fb0 ]; then
      TMP="$(mktemp /tmp/lang.XXXXXX)"
      if [ ! -e /run/live/drbl-langchooser ]; then
        drbl-langchooser $TMP
@@ -11271,7 +11271,7 @@ is_partclone_support_fs() {
   # echo "hfs" | grep -Eiw "hfs+" will shown. It's not what we want.
   [ -z "$input_fs" ] && return 1
   if [ -n "$(LC_ALL=C echo "$partclone_support_fs" | grep -Fiw "$input_fs")" ]; then
-    # check if the corresponding programs exists 
+    # check if the corresponding programs exists
     if type partclone.${input_fs} &>/dev/null; then
       rc=0
     else
@@ -11297,7 +11297,7 @@ get_dd_image_info() {
   # show it with unit
   space_used="$(tail -n 1 "$report_info" | grep -oE "\(.*\)" | sed -e "s/[()]//g")"
   speed="$(tail -n 1 "$report_info" | awk -F"," '{print $3}')"
-  # for old version dd, no speed report. Do not let speed be nothing 
+  # for old version dd, no speed report. Do not let speed be nothing
   if [ -z "$speed" ]; then
     rcode=1
     # show it with unit
@@ -11353,7 +11353,7 @@ check_if_tty_the_specified_one_and_continue() {
   local TMP ocslivemode
 
   check_current_tty_sudo_tty yes
-  
+
   TMP="$(mktemp /tmp/ocslivemode.XXXXXX)"
   trap "[ -f "$TMP" ] && rm -f $TMP" HUP INT QUIT TERM EXIT
   $DIA --backtitle "$msg_nchc_free_software_labs" --title  \
@@ -11365,9 +11365,9 @@ check_if_tty_the_specified_one_and_continue() {
   ocslivemode="$(cat $TMP)"
   echo "ocslivemode is $ocslivemode"
   [ -f "$TMP" ] && rm -f $TMP
-  
+
   case "$ocslivemode" in
-    "Start_Clonezilla") 
+    "Start_Clonezilla")
       echo "Start Clonezilla now..." ;;
     "Enter_shell"|"") exit 99 ;;
   esac
@@ -11420,26 +11420,26 @@ ocs-live-env-prepare(){
   if [ -n "$(find /$LIVE_MEDIA/$ocsroot/* -maxdepth 1 -type d -print 2>/dev/null)" ]; then
     # If images exist in /$LIVE_MEDIA/$ocsroot, default to make $ocsroot link to /$LIVE_MEDIA/$ocsroot.
     # This link file will be removed by ocs-prep-repo if it need the mount point $ocsroot (dir).
-    # Remove the stale mountpoint if it's empty. This will avoid link twice: 
+    # Remove the stale mountpoint if it's empty. This will avoid link twice:
     # If we run this later:
     # ln -fs /live_media/home/partimag /home/partimag
     # if the latter dir /home/partimag exists then link will create something like:
     # ls -l /home/partimag/
     # lrwxrwxrwx 1 root root 26 2007-12-13 23:29 partimag -> /live_media//home/partimag
     # If we embedded the image in Clonezilla live, /$LIVE_MEDIA/$ocsroot will exist, so if we run "mkdir -p /$LIVE_MEDIA/$ocsroot", it will succeed, and this is what we want, too. Since later we will link /$LIVE_MEDIA/$ocsroot to $ocsroot.
-    [ -d "$ocsroot" -a -z "$(unalias ls &>/dev/null; ls $ocsroot/ 2>/dev/null)" ] && rmdir $ocsroot 
-    [ -L "$ocsroot" ] && rm -f $ocsroot 
+    [ -d "$ocsroot" -a -z "$(unalias ls &>/dev/null; ls $ocsroot/ 2>/dev/null)" ] && rmdir $ocsroot
+    [ -L "$ocsroot" ] && rm -f $ocsroot
     mkdir -p "$(dirname $ocsroot)"
     ln -fs /$LIVE_MEDIA/$ocsroot $ocsroot
   else
     # mkdir a mount point to be used later if it does not exist. Normally it will be created in /etc/ocs/ocs-live.d/S03prep-drbl-clonezilla, so here it's just a insurance.
     [ ! -d "$ocsroot" ] && mkdir -p $ocsroot
   fi
-  
+
   choose_language_in_fb_term
   [ -z "$ocs_lang" ] && ocs_lang=en_US.UTF-8
   ask_and_load_lang_set $ocs_lang
-  
+
   # run the main program
   [ "$ocs_live_batch" = "no" ] && check_if_tty_the_specified_one_and_continue
 } # end of ocs-live-env-prepare
@@ -11516,15 +11516,15 @@ get_live_boot_param() {
   # LABEL live
   # 	MENU LABEL Start Debian Live
   # 	kernel /live/vmlinuz1
-  # 	append initrd=/live/initrd1.img boot=live username=casper union=aufs 
+  # 	append initrd=/live/initrd1.img boot=live username=casper union=aufs
   # ---------------------------
-  
+
   # For live helper with casper, maybe it is: boot=casper username=casper union=unionfs
   # ---------------------------
   # LABEL live
   #       MENU LABEL Start Debian Live
   # 	kernel /casper/vmlinuz1
-  # 	append initrd=/casper/initrd1.img boot=casper username=casper hostname=debian 
+  # 	append initrd=/casper/initrd1.img boot=casper username=casper hostname=debian
   # ---------------------------
   # "boot_param", "quiet_opt" and "splash_opt" are global variables
   local iso_tmp="$1"
@@ -11647,7 +11647,7 @@ ocs_success_mountpoint() {
   # df $df_extra_opt -h 2>&1 | tee --append ${OCS_MOUNT_LOG}
   # Better way to show only /home/partimag:
   # findmnt --df --target /home/partimag/
-  # E.g. 
+  # E.g.
   # SOURCE                    FSTYPE    SIZE  USED  AVAIL USE% TARGET
   # /dev/sdf1[/level2/level3] reiserfs  500G 40.1G 459.9G   8% /home/partimag
   findmnt --df --target $ocsroot 2>&1 | tee --append ${OCS_MOUNT_LOG}
@@ -11730,7 +11730,7 @@ get_RawCHS_of_HD_from_hdparm() {
   # UDMA modes: udma0 udma1 *udma2
   # AdvancedPM=yes: disabled (255)
   # Drive conforms to: ATA/ATAPI-4 T13 1153D revision 17:  ATA/ATAPI-1 ATA/ATAPI-2 ATA/ATAPI-3 ATA/ATAPI-4
-  # 
+  #
   selected_hd="$1"  # e.g. /dev/hda
   [ -z "$selected_hd" ] && echo "You have to assign selected_hd in function get_RawCHS_of_HD_from_hdparm" && exit 1
   RawCHS="$(hdparm -i $selected_hd 2>/dev/null | grep -iEo "RawCHS=.*," | awk -F "," '{print $1}' | sed -s "s/RawCHS=//g")"
@@ -11752,7 +11752,7 @@ edd_id_map_by_mbr() {
   local disk_="$1"  # e.g. /dev/hda
   local mbr_sig edd_mapdev
   # Function to get the disk signature by the data in MBR:
-  # Address (Hex: 01B8, or Dec: 440) 
+  # Address (Hex: 01B8, or Dec: 440)
   # Ref: https://sourceforge.net/forum/message.php?msg_id=6108241
   #      http://en.wikipedia.org/wiki/Master_boot_record
   # Because /lib/udev/edd_id maybe not work in some cases.
@@ -11819,7 +11819,7 @@ get_RawCHS_of_HD_from_EDD() {
   [ -z "$map_dev" ] && map_dev="$(edd_id_map_by_mbr $selected_hd)"
   # Try to match by capacity
   [ -z "$map_dev" ] && map_dev="$(edd_id_map_by_capacity $selected_hd)"
-  # If still not found, return 
+  # If still not found, return
   [ -z "$map_dev" ] && return 1
 
   rawhead="$(cat /sys/firmware/edd/$map_dev/legacy_max_head 2>/dev/null)"
@@ -11848,7 +11848,7 @@ get_RawCHS_of_HD_from_EDD() {
 get_RawCHS_of_HD_from_sfdisk() {
   local selected_hd opt_sf
   # rawcyl rawhead rawsector are global variables
-  # 
+  #
   selected_hd="$(format_dev_name_with_leading_dev $1)"  # e.g. /dev/sda
   opt_sf="$2"    # e.g. -g or -G
   [ -z "$selected_hd" ] && echo "You have to assign selected_hd in function get_RawCHS_of_HD_from_hdparm" && exit 1
@@ -11876,7 +11876,7 @@ run_ntfsreloc_part() {
         -s|--selected-hd)
              shift
              if [ -z "$(echo $1 |grep ^-.)" ]; then
-               # skip the -xx option, in case 
+               # skip the -xx option, in case
 	       selected_hd="$(format_dev_name_with_leading_dev $1)"
                shift
              fi
@@ -11885,7 +11885,7 @@ run_ntfsreloc_part() {
         -p|--selected-parts)
              shift
              if [ -z "$(echo $1 |grep ^-.)" ]; then
-               # skip the -xx option, in case 
+               # skip the -xx option, in case
 	       selected_parts="$(format_dev_name_with_leading_dev $1)"
                shift
              fi
@@ -11912,7 +11912,7 @@ run_ntfsreloc_part() {
        if [ -n "$ntfs_boot_partition" ]; then
          echo "Found NTFS boot partition among the restored partition(s): $ntfs_boot_partition"
        else
-         echo "The NTFS boot partition was not found or not among the restored partition(s). Skip running partclone.ntfsfixboot." 
+         echo "The NTFS boot partition was not found or not among the restored partition(s). Skip running partclone.ntfsfixboot."
 	 return 1
        fi
     fi
@@ -11930,7 +11930,7 @@ run_ntfsreloc_part() {
       if [ "$use_RawCHS_from_sfdisk_for_ntfsreloc" = "yes" ]; then
         # Ref: https://sourceforge.net/forum/message.php?msg_id=6181406
         if [ "$load_HD_CHS_from_img" = "yes" ]; then
-	  # Since user forces to load CHS, we read CHS from image file 
+	  # Since user forces to load CHS, we read CHS from image file
           . "$ocsroot/$target_dir/$(to_filename ${ntfs_boot_hd#/dev/*})-chs.sf"
           rawhead="$heads"
           rawsector="$sectors"
@@ -11984,13 +11984,13 @@ fsck_partition() {
           echo "There is no good tool to check and repair NTFS on GNU/Linux, hence skip fscking this partition $dev_" | tee -a $OCS_LOGFILE
           [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
           ;;
-    btrfs) 
+    btrfs)
 	  btrfs_chk="btrfs check --repair -p $dev_"
 	  # btrfs_scrub="btrfs scrub start -Bf $dev_"
 	  echo "Running: $btrfs_chk" | tee -a $OCS_LOGFILE
 	  eval $btrfs_chk
           ;;
-    *)    
+    *)
           fsck_cmd="fsck -f $fsck_exopt_ $dev_"
           echo "Running: $fsck_cmd" | tee -a $OCS_LOGFILE
 	  eval $fsck_cmd
@@ -12002,7 +12002,7 @@ decide_MKSQUASHFS_OPTIONS() {
   # This function will output "export MKSQUASHFS_OPTIONS"
   local assign_arch="$1"
   local the_arch sq_comp_opt
-  # Exclude some stuffs from the squashfs root, since in Live system, 
+  # Exclude some stuffs from the squashfs root, since in Live system,
   # we will only use vmlinuz and initrd in /{casper,live}, not in the /boot/ in the squashfs.
   # "-comp xz -Xbcj x86" can be used when the CONFIG_SQUASHFS_XZ is on in kernel.
   # For "-Xbcj x86", refer to: http://kerneltrap.org/mailarchive/linux-fsdevel/2010/12/9/6887823
@@ -12016,7 +12016,7 @@ decide_MKSQUASHFS_OPTIONS() {
      *)                # ARM64 seems not working for "-Xbcj arm", so keep it blank.
                        sq_comp_opt="-comp xz";;
   esac
-  export MKSQUASHFS_OPTIONS="-b 1024k $sq_comp_opt -e boot"  
+  export MKSQUASHFS_OPTIONS="-b 1024k $sq_comp_opt -e boot"
 } # end of decide_MKSQUASHFS_OPTIONS
 #
 get_live_autologin_account(){
@@ -12047,7 +12047,7 @@ check_image_if_restorable() {
       -i|--image-name)
           shift
           if [ -z "$(echo $1 |grep ^-.)" ]; then
-            # skip the -xx option, in case 
+            # skip the -xx option, in case
             img_nm="$1"
             shift
           fi
@@ -12129,11 +12129,11 @@ get_bsd_swap_partition() {
   #/dev/sda2             0         -          0   0  Empty
   #/dev/sda3             0         -          0   0  Empty
   #/dev/sda4             0         -          0   0  Empty
-  #/dev/sda5            63   1466430    1466368 
-  #/dev/sda6       1466431   2347030     880600 
-  #/dev/sda7       2347031   6330390    3983360 
-  #/dev/sda8       6330391   7325718     995328 
-  #/dev/sda9       7325719  16776584    9450866 
+  #/dev/sda5            63   1466430    1466368
+  #/dev/sda6       1466431   2347030     880600
+  #/dev/sda7       2347031   6330390    3983360
+  #/dev/sda8       6330391   7325718     995328
+  #/dev/sda9       7325719  16776584    9450866
   # =============================
   # We want to find the swap partition (/dev/sda6) from this 2 info. "from 1466431" is the key to find /dev/sda6.
   local c_disk="$1"   # e.g. /dev/sda
@@ -12180,14 +12180,14 @@ show_deprecated_ocs_lang_and_keymap() {
   # This function is especially for Clonezilla live boot parameters. To the deprecated ocs_lang and ocs_live_keymap
   if [ -n "$ocs_lang" ]; then
     [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
-    echo "Boot parameter \"ocs_lang\" is deprecated! Please use \"locales\" from live-config." 
+    echo "Boot parameter \"ocs_lang\" is deprecated! Please use \"locales\" from live-config."
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     echo "For more info, please refer to http://live.debian.net/manual/html/live-manual.en.html#customizing-locale-and-language"
     sleep 1
   fi
   if [ -n "$ocs_live_keymap" ]; then
     [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
-    echo "Boot parameter \"ocs_live_keymap\" is deprecated! Please use \"keyboard-layouts\" from live-config." 
+    echo "Boot parameter \"ocs_live_keymap\" is deprecated! Please use \"keyboard-layouts\" from live-config."
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     echo "For more info, please refer to http://live.debian.net/manual/html/live-manual.en.html#customizing-locale-and-language"
     sleep 1
@@ -12216,7 +12216,7 @@ check_mbr_disk_size_gt_2TiB() {
   size_cal="$(echo "scale=0; $dest_dsk_size_in_B >= 2199023255040" | bc -l)"
   if [ "$size_cal" -eq 1 ]; then
     case "$postaction" in
-      exit) 
+      exit)
             [ "$BOOTUP" = "color" ] && $SETCOLOR_FAILURE
 	    echo "Error! Destination disk ($dest_dsk) size is $dest_dsk_size_in_TB, which is larger than the MBR partition table entry maximum 2 TiB (~ 2.2 TB). You have to use GUID partition table format (GPT)." | tee --append ${OCS_LOGFILE}
             [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
@@ -12231,7 +12231,7 @@ check_mbr_disk_size_gt_2TiB() {
 	      echo -n "$msg_press_enter_to_continue..." | tee --append ${OCS_LOGFILE}
               read
             fi
-            ;; 
+            ;;
     esac
   fi
 } # end of check_mbr_disk_size_gt_2TiB
@@ -12776,7 +12776,7 @@ get_master_dev_of_multipath() {
   done
   echo "${master_dev}${pt}"
 } # end of get_master_dev_of_multipath
-# Function Name: 
+# Function Name:
 #   expand_multipath_dev
 # Description:
 #   Return the device names associated with the multipath
@@ -12821,7 +12821,7 @@ expand_multipath_dev() {
   echo $(echo "$tgt_parts" | tr ' ' '\n' | sort)
   return $rc
 } # end of expand_multipath_dev
-# Function Name: 
+# Function Name:
 #   reduce_multipath_dev
 # Description:
 #   Eliminate duplicate path
@@ -12906,7 +12906,7 @@ ocs_log_rotate() {
   if [ -z "$last_digit" -o "$(echo $last_digit | grep -E "[^[:digit:]]")" ]; then
     last_digit=0
   fi
-  # Rotate the old ones, i.e. clonezilla.log.0 -> clonezilla.log.1, 
+  # Rotate the old ones, i.e. clonezilla.log.0 -> clonezilla.log.1,
   # clonezilla.log.1 -> clonezilla.log.2,...
   for i in `seq $last_digit -1 0`; do
     if [ -e "${file_}.${i}" ]; then
@@ -13079,9 +13079,9 @@ get_latest_kernel_ver_in_repository() {
     # Package: linux-image-6.6.9-amd64
     # ocs_live_exclude_kernels is from drbl-ocs.conf
     # We only want the kernel: 686, amd64, arm64, armmp, generic, generic-lpae
-    # They are assigned by "ocs_live_only_kernels" in drbl-ocs.conf 
+    # They are assigned by "ocs_live_only_kernels" in drbl-ocs.conf
     ocs_live_kernel_filter1="grep -E -- $ocs_live_only_kernels"
-    ocs_live_kernel_filter2="grep -Ev -- $ocs_live_exclude_kernels" 
+    ocs_live_kernel_filter2="grep -Ev -- $ocs_live_exclude_kernels"
     # We want to extract the kver as: 6.5.0-9, 6.5.0-5, or 6.6.9, for example.
     kver="$(LC_ALL=C xzgrep -E '^Package: linux-image-[[:digit:]]+\.[[:digit:]]+.*-' $ktmp/Packages.xz |\
 	    $ocs_live_kernel_filter1 | $ocs_live_kernel_filter2 |\
@@ -13092,7 +13092,7 @@ get_latest_kernel_ver_in_repository() {
       # Clean Packages.xz to avoid wget using another name like Packages.xz.1 then search the next again
       rm -f $ktmp/Packages.xz
     else
-      # Found! Use it. 
+      # Found! Use it.
       break
     fi
   done
@@ -13104,7 +13104,7 @@ get_latest_kernel_ver_in_repository() {
     echo "Unable to find the latest kernel version in $mirror_url/dists/$i/main/binary-${arch_s}/Packages.xz. Use the pre-defined one."
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
     echo -n "$msg_press_enter_to_continue"
-    read 
+    read
     eval release_kernel_ver="\$${i}_release_kernel_ver_def"
   fi
   [ -d "$ktmp" -a -n "$(echo $ktmp | grep "live_kver")" ] && rm -rf $ktmp
@@ -13150,10 +13150,10 @@ get_efi_hd_boot_entry_info() {
   while [ $# -gt 0 ]; do
     case "$1" in
       -a|--all-boot-entry) shift; filt_case="all" ;;
-      -b|--show-num-order-info-only) 
+      -b|--show-num-order-info-only)
          shift
          if [ -z "$(echo $1 |grep ^-.)" ]; then
-           # skip the -xx option, in case 
+           # skip the -xx option, in case
 	   boot_num="$1"
            shift
          fi
@@ -13165,10 +13165,10 @@ get_efi_hd_boot_entry_info() {
          fi
 	 filt_case="boot-num"
          ;;
-      -d|--show-dev-uuid-only) 
+      -d|--show-dev-uuid-only)
          shift
          if [ -z "$(echo $1 |grep ^-.)" ]; then
-           # skip the -xx option, in case 
+           # skip the -xx option, in case
 	   dev_uuid="$1"
            shift
          fi
@@ -13180,11 +13180,11 @@ get_efi_hd_boot_entry_info() {
          fi
 	 filt_case="dev-uuid"
          ;;
-      -n|--show-dev-name-only) 
+      -n|--show-dev-name-only)
          # Assigned dev_nam is like: /dev/sda1
          shift
          if [ -z "$(echo $1 |grep ^-.)" ]; then
-           # skip the -xx option, in case 
+           # skip the -xx option, in case
 	   dev_nam="$1"
            shift
          fi
@@ -13196,10 +13196,10 @@ get_efi_hd_boot_entry_info() {
          fi
 	 filt_case="dev-name"
          ;;
-      -p|--append) 
+      -p|--append)
          shift
          if [ -z "$(echo $1 |grep ^-.)" ]; then
-           # skip the -xx option, in case 
+           # skip the -xx option, in case
 	   append_ch="$1"
            shift
          fi
@@ -13226,11 +13226,11 @@ get_efi_hd_boot_entry_info() {
   # < 18.4: Boot0000* ubuntu        HD(1,GPT,UUID,0x800,0x82000)/File(\EFI\ubuntu\shimx64.efi)
   # >=18.4: Boot0010* debian        HD(1,GPT,UUID,0x800,0x100000)/\EFI\debian\shimx64.efi
   case "$type_" in
-    nvram) 
+    nvram)
       # From nvram in the running system. Only those related to boot file
       LC_ALL=C efibootmgr -v | grep -E "^Boot.*[[:space:]]+HD\(.*EFI" > $nvram_tmp
       ;;
-    *)  
+    *)
       # From saved nvram file in the image dir.
       if [ -e "${type_}" ]; then
          cat ${type_} | grep -E "^Boot.*[[:space:]]+HD\(.*EFI" > $nvram_tmp
@@ -13251,24 +13251,24 @@ get_efi_hd_boot_entry_info() {
       # Get the 1st boot order. When multiple items are available, we only refer to first boot order.
       # boot_num e.g.,: Boot000C
       boot_num="Boot$(LC_ALL=C cat $nvram_tmp | grep -Eiw "^BootOrder:" | awk -F" " '{print $2}' | awk -F"," '{print $1}')"
-      filter_entry="grep -Ew ^${boot_num}" 
+      filter_entry="grep -Ew ^${boot_num}"
       ;;
     boot-num)
       boot_num="Boot${boot_num}" # Prepend "Boot" so that it's like Boot000C
-      filter_entry="grep -Ew ^${boot_num}" 
+      filter_entry="grep -Ew ^${boot_num}"
       ;;
     dev-uuid)
       # The case when -d|--show-dev-uuid-only) is used
       # Boot0004* opensuse  HD(1,GPT,7f033140-72dd-47f6-a9f2-ef7486b67510,0x800,0x4e000)/File(\EFI\opensuse\grubx64.efi)
-      filter_entry="grep -E ,${dev_uuid}," 
+      filter_entry="grep -E ,${dev_uuid},"
       ;;
     dev-name)
       # The case when -n|--show-dev-name-only) is used
       # Boot0004* opensuse  HD(1,GPT,7f033140-72dd-47f6-a9f2-ef7486b67510,0x800,0x4e000)/File(\EFI\opensuse\grubx64.efi)
       dev_uuid="$(get_part_uuid_in_harddrive $dev_nam)"
-      filter_entry="grep -E ,${dev_uuid}," 
+      filter_entry="grep -E ,${dev_uuid},"
       ;;
-    all) 
+    all)
       # no any filter
       filter_entry="cat"
       ;;
@@ -13364,31 +13364,31 @@ get_best_console_font_size() {
   #     endmode
   #
   # Valid font faces are: VGA (sizes  8x8,  8x14,  8x16,  16x28  and 16x32),  Terminus  (sizes  6x12, 8x14, 8x16, 10x20, 12x24, 14x28 and 16x32), TerminusBold (sizes 8x14, 8x16, 10x20, 12x24,  14x28 and  16x32),  TerminusBoldVGA  (sizes  8x14 and 8x16), and Fixed (sizes  8x13,  8x14,  8x15,  8x16   and   8x18).    If   however CODESET=Ethiopian,  then  the  available font faces are Goha and GohaClassic, each in sizes 8x12, 8x14 and 8x16.
-  
+
   resoluton_cols="$(LC_ALL=C fbset -s | grep -Ew "^[[:space:]]*geometry" | awk -F" " '{print $2}')"
-  
+
   # [ ! -e "/etc/default/console-setup" ] && exit 1
   # . /etc/default/console-setup
   # # FONTSIZE is like: 16, 16x32
   # font_rows="$(LC_ALL=C echo $FONTSIZE | awk -F"x" '{print $1}')"
   # size_rows="$(echo "scale=0; ${resoluton_rows}/${font_rows}" | bc -l)"
   # echo "row size: $size_rows"
-  
+
   if [ -n "$resoluton_cols" ]; then
     font_size_cols="$(echo "scale=0; ${resoluton_cols}/${console_prefer_cols}" | bc -l)"
     echo "Calculated font column size: $font_size_cols"
   fi
   # From Debian Sid (console-setup 1.95), the manual (man 5 console-setup) says:
-  # Terminus  (sizes  6x12, 8x14, 8x16, 10x20, 12x24, 14x28 and 16x32), 
-  # TerminusBold (sizes 8x14, 8x16, 10x20, 12x24,  14x28 and  16x32),  
-  # TerminusBoldVGA  (sizes  8x14 and 8x16), 
+  # Terminus  (sizes  6x12, 8x14, 8x16, 10x20, 12x24, 14x28 and 16x32),
+  # TerminusBold (sizes 8x14, 8x16, 10x20, 12x24,  14x28 and  16x32),
+  # TerminusBoldVGA  (sizes  8x14 and 8x16),
   # Fixed (sizes  8x13,  8x14,  8x15,  8x16   and   8x18)
-  
+
   # However, on Ubuntu 13.10, the file /etc/default/console-data says:
   # Valid font faces are: VGA (sizes 8, 14 and 16), Terminus (sizes
   # 12x6, 14, 16, 20x10, 24x12, 28x14 and 32x16), TerminusBold (sizes
   # 14, 16, 20x10, 24x12, 28x14 and 32x16), TerminusBoldVGA (sizes 14
-  # and 16) and Fixed (sizes 13, 14, 15, 16 and 18). 
+  # and 16) and Fixed (sizes 13, 14, 15, 16 and 18).
   # The file name is actually like: /usr/share/consolefonts/Lat2-TerminusBold20x10.psf.gz, both on Debian Sid and Ubuntu 13.04.
   # XXX The cols and rows are opposite... weird...
   # However, for console-setup (1.71) unstable; urgency=low, the changelog mentionied:
@@ -13424,20 +13424,20 @@ get_best_console_font_size() {
 #
 gen_iso_sort_file() {
   # Suggestion from Ady <ady-sf _at_ hotmail com>
-  # In older versions of Syslinux, the isolinux.bin file (ISOLINUX's 
-  # eltorito no-emulation boot loader) was smaller than in the current 
-  # 6.xx versions. For example, in version 4.07 the isolinux.bin is 24KB, 
+  # In older versions of Syslinux, the isolinux.bin file (ISOLINUX's
+  # eltorito no-emulation boot loader) was smaller than in the current
+  # 6.xx versions. For example, in version 4.07 the isolinux.bin is 24KB,
   # while the file is bigger than 40KB in the 6.xx branch.
-  # 
-  # Evidently, this additional size uses more LBAs, and some buggy BIOS 
-  # are having troubles with this situation. In a certain sense (but not 
-  # necessarily a strict technical comparison), it is similar to the old 
-  # problem about partitions being located over 1024 cylinders and thus 
+  #
+  # Evidently, this additional size uses more LBAs, and some buggy BIOS
+  # are having troubles with this situation. In a certain sense (but not
+  # necessarily a strict technical comparison), it is similar to the old
+  # problem about partitions being located over 1024 cylinders and thus
   # not being bootable (which of course is not an issue nowadays).
-  # 
-  # Although isolinux.bin 6.xx has been patched so to reduce the chances 
-  # of boot failure with such buggy BIOS, putting the entire isolinux.bin 
-  # in lower LBAs has been proved to help, even before the introduction 
+  #
+  # Although isolinux.bin 6.xx has been patched so to reduce the chances
+  # of boot failure with such buggy BIOS, putting the entire isolinux.bin
+  # in lower LBAs has been proved to help, even before the introduction
   # of patches.
   local out_f="$1"
   if [ -z "$out_f" ]; then
@@ -13473,7 +13473,7 @@ download_clonezilla_live() {
   [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
   arch_tag="-$c_arch"
 
-  # iso_url_for_pxe_ocs_live_default is from drbl-ocs.conf. e.g. 
+  # iso_url_for_pxe_ocs_live_default is from drbl-ocs.conf. e.g.
   # (1) http://downloads.sourceforge.net/clonezilla/clonezilla-live-1.2.6-24-i686.iso
   # (2) http://sourceforge.net/projects/clonezilla/files/clonezilla_live_testing/clonezilla-live-1.2.6-24-i686.iso
   if [ -z "$iso_url_ocs_live" ]; then
@@ -13556,7 +13556,7 @@ get_pv_on_disk_from_local_machine() {
     fi
   done
   # Remove the leading space
-  lpv_on_dsk="$(echo  "$lpv_on_dsk" | sed -r -e "s/^[[:space:]]*//g")" 
+  lpv_on_dsk="$(echo  "$lpv_on_dsk" | sed -r -e "s/^[[:space:]]*//g")"
   if [ -n "$lpv_on_dsk" ]; then
     echo "$lpv_on_dsk"
     return 0
@@ -13567,7 +13567,7 @@ get_pv_on_disk_from_local_machine() {
 
 #
 get_pv_on_disk_from_PV_conf_list() {
-  # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition, 
+  # There is still one possiblity that we need to deal with LVM, i.e. PV is not on partition,
   # instead it's on a disk (e.g. /dev/sdb).
   local pv_cfg_list="$1"  # The PV_PARSE_CONF file from the image dir. Absolute path.
   local lpv_on_dsk
@@ -13602,15 +13602,15 @@ get_ecryptfs_info() {
   if [ -e $ocsroot/$target_dir/disk ]; then
     disk_list="$(get_disk_list_from_img "$ocsroot/$target_dir")"
   fi
-  
+
   if [ -e $ocsroot/$target_dir/parts ]; then
     parts_list="$(get_parts_list_from_img "$ocsroot/$target_dir")"
   fi
-  
+
   img_time="$(get_img_created_time "$ocsroot/$target_dir")"
-  
+
   disks_size_all=""
-  for ihd in $disk_list; do 
+  for ihd in $disk_list; do
     disk_size_=""
     if [ -e "$ocsroot/$target_dir/$(to_filename ${ihd})-pt.parted.compact" ]; then
       disk_size_="$(LC_ALL=C grep -E "^Disk /dev/" "$ocsroot/$target_dir/$(to_filename ${ihd})-pt.parted.compact" | awk -F":" '{print $2}' | sed -r -e "s/[[:space:]]//g")"
@@ -13746,7 +13746,7 @@ is_davfs_ocsroot() {
   # http://192.168.120.254:8080/share/ on /home/partimag type fuse (rw,nosuid,nodev,noexec,relatime,user_id=0,group_id=0,allow_other,max_read=10481664,uid=0,gid=0,helper=davfs)
   mnt_pnts="$(LC_ALL=C mount -l -t davfs 2>/dev/null | awk -F" " '{print $3}')"
   if [ -z "$mnt_pnts" ]; then
-    # Try again, use different method (for Debian case)	  
+    # Try again, use different method (for Debian case)
     mnt_pnts="$(LC_ALL=C mount -l | grep -E "helper=davfs" | awk -F" " '{print $3}')"
   fi
   rc="1"
@@ -13938,7 +13938,7 @@ get_sfdisk_cyl_opt_flag() {
 } # get_sfdisk_cyl_opt_flag
 #
 replace_disk_name_in_file(){
-  # Function to replace disk name in a file, 
+  # Function to replace disk name in a file,
   # e.g. to replace sda with nvme0n1 in sda-pt.sf
   local src_d="$1" # e.g sda
   local tgt_d="$2" # e.g nvme0n1
@@ -13984,7 +13984,7 @@ replace_disk_name_in_file(){
   # /dev/nvme0n1p1 : start=        2048, size=      997376, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, uuid=942B0228-B4C3-49D8-8D21-D2DBD6A50AC0
   # /dev/nvme0n1p2 : start=      999424, size=     7999488, type=0657FD6D-A4AB-43C4-84E5-0933C84B4F4F, uuid=D47B030E-FCA6-485F-B6CF-5CC4BD708256
   # /dev/nvme0n1p3 : start=     8998912, size=  2335225856, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=D9ED4B04-1077-4390-B177-B558445A7F38
-  # 
+  #
   # nvme0n1p3 has extra "p", we can not just s/nvme0n1/sda/, otherwise resutls:
   # will have "sdap1", the wrong partition name.
   # label: gpt
@@ -14007,7 +14007,7 @@ replace_disk_name_in_file(){
   # unit: sectors
   # first-lba: 34
   # last-lba: 250069646
-  # 
+  #
   # /dev/sda1 : start=        2048, size=     1048576, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, uuid=B2A6B3F9-ECD3-49A0-A158-58A5F0196446
   # /dev/sda2 : start=     1050624, size=   215730176, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=B70F9778-4FAE-4E81-872D-F3ED1C7E812D
   # /dev/sda3 : start=   216780800, size=    33288192, type=0657FD6D-A4AB-43C4-84E5-0933C84B4F4F, uuid=930033EA-5B82-48AA-91B9-E12A9EBE3B36
@@ -14019,7 +14019,7 @@ replace_disk_name_in_file(){
   # unit: sectors
   # first-lba: 34
   # last-lba: 250069646
-  # 
+  #
   # /dev/nvme0n11 : start=        2048, size=     1048576, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, uuid=B2A6B3F9-ECD3-49A0-A158-58A5F0196446
   # /dev/nvme0n12 : start=     1050624, size=   215730176, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=B70F9778-4FAE-4E81-872D-F3ED1C7E812D
   # /dev/nvme0n13 : start=   216780800, size=    33288192, type=0657FD6D-A4AB-43C4-84E5-0933C84B4F4F, uuid=930033EA-5B82-48AA-91B9-E12A9EBE3B36
@@ -14072,7 +14072,7 @@ replace_disk_name_in_file(){
 } # end of replace_disk_name_in_file
 #
 replace_disk_name_stdin(){
-  # Function to replace disk name from stdin, 
+  # Function to replace disk name from stdin,
   # e.g. to replace sda with nvme0n1
   local src_d="$1" # e.g sda
   local tgt_d="$2" # e.g nvme0n1
@@ -14096,7 +14096,7 @@ replace_disk_name_stdin(){
   # /dev/nvme0n1p1 : start=        2048, size=      997376, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, uuid=942B0228-B4C3-49D8-8D21-D2DBD6A50AC0
   # /dev/nvme0n1p2 : start=      999424, size=     7999488, type=0657FD6D-A4AB-43C4-84E5-0933C84B4F4F, uuid=D47B030E-FCA6-485F-B6CF-5CC4BD708256
   # /dev/nvme0n1p3 : start=     8998912, size=  2335225856, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=D9ED4B04-1077-4390-B177-B558445A7F38
-  # 
+  #
   # nvme0n1p3 has extra "p", we can not just s/nvme0n1/sda/, otherwise resutls:
   # will have "sdap1", the wrong partition name.
   # label: gpt
@@ -14119,7 +14119,7 @@ replace_disk_name_stdin(){
   # unit: sectors
   # first-lba: 34
   # last-lba: 250069646
-  # 
+  #
   # /dev/sda1 : start=        2048, size=     1048576, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, uuid=B2A6B3F9-ECD3-49A0-A158-58A5F0196446
   # /dev/sda2 : start=     1050624, size=   215730176, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=B70F9778-4FAE-4E81-872D-F3ED1C7E812D
   # /dev/sda3 : start=   216780800, size=    33288192, type=0657FD6D-A4AB-43C4-84E5-0933C84B4F4F, uuid=930033EA-5B82-48AA-91B9-E12A9EBE3B36
@@ -14131,7 +14131,7 @@ replace_disk_name_stdin(){
   # unit: sectors
   # first-lba: 34
   # last-lba: 250069646
-  # 
+  #
   # /dev/nvme0n11 : start=        2048, size=     1048576, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, uuid=B2A6B3F9-ECD3-49A0-A158-58A5F0196446
   # /dev/nvme0n12 : start=     1050624, size=   215730176, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=B70F9778-4FAE-4E81-872D-F3ED1C7E812D
   # /dev/nvme0n13 : start=   216780800, size=    33288192, type=0657FD6D-A4AB-43C4-84E5-0933C84B4F4F, uuid=930033EA-5B82-48AA-91B9-E12A9EBE3B36
@@ -14185,7 +14185,7 @@ get_chksum_info_from_img() {
   # Function to get the checksum (md5sum, sha1sum, sha256sum...) from image dir.
   local img_f_path_="$1" # target dir, full path, like /home/partimag/my-img
   local prt_="$2" # partition, e.g. sda1. Or "*" means any of them.
-  local csumf_basename_ 
+  local csumf_basename_
   # chksum_file and chksum_cmd are global variables to be returned.
   # Reset chksum_file and chksum_cmd
   chksum_file=""
@@ -14311,7 +14311,7 @@ inspect_chksum_for_files_in_dev() {
         fi
       else
        echo "$msg_chksum_inspection_for_files_passed: /dev/$sum_part" | tee --append ${OCS_LOGFILE}
-       echo "$msg_chksum_results_saved_in_this_file: $chk_rlt_log" | tee --append ${OCS_LOGFILE} 
+       echo "$msg_chksum_results_saved_in_this_file: $chk_rlt_log" | tee --append ${OCS_LOGFILE}
       fi
       umount /dev/$sum_part
     else
@@ -14377,7 +14377,7 @@ prepare_mnt_point_ocsroot() {
     umount $ocsroot
   fi
   # Somehow the failing SSHFS can not be detected by mountpoint
-  # E.g. 
+  # E.g.
   # ls -laFh /home/partimag
   # ls: cannot access '/home/partimag': Transport endpoint is not connected
   # So here try another method.
@@ -14399,14 +14399,14 @@ prepare_mnt_point_ocsroot() {
 #
 load_ocsroot_mnt_cmd() {
   # Function to be used for ocs-prep-repo and ocs-live-respository
-  ocsroot_mnt_cmd_smb="LC_ALL=C mount -t cifs \"//${smb_srv}${smbfs_dir}\" $ocsroot -o user=\"${smb_account}${smb_password_opt}${smb_domain_opt}\"${smb_sec_opt}${smb_ver_opt}" 
+  ocsroot_mnt_cmd_smb="LC_ALL=C mount -t cifs \"//${smb_srv}${smbfs_dir}\" $ocsroot -o user=\"${smb_account}${smb_password_opt}${smb_domain_opt}\"${smb_sec_opt}${smb_ver_opt}"
   ocsroot_mnt_cmd_nfs="LC_ALL=C mount -t $nfs_ver $nfs_srv:$nfs_dir $ocsroot -o $ocsroot_def_mnt_opt,$nfsvers_opt"
   ocsroot_mnt_cmd_webdav="LC_ALL=C mount -t davfs -o noexec $davfs_url $ocsroot"
   ocsroot_mnt_cmd_sshfs="LC_ALL=C sshfs \"$ssh_account\"@$ssh_srv:\"$sshfs_dir\" $ocsroot -p $ssh_port $sshfs_extra_opt"
 } # end of load_ocsroot_mnt_cmd
 #
 BrowseCurrentDirectory() {
-  # The sample code of this function was provided by Aaron Burling (aaron_burling _at_ lkstevens wednet edu). 
+  # The sample code of this function was provided by Aaron Burling (aaron_burling _at_ lkstevens wednet edu).
   # Show existing dir so that user can choose then return chosen to file ANS_TMP
   local wk_dir="$1"
   local ANS_TMP="$2"
@@ -14419,7 +14419,7 @@ BrowseCurrentDirectory() {
   else
    basedir="$wk_dir"
   fi
-  
+
   cd $basedir
   while true ; do
     if [ "$(pwd)" == "$basedir" ]; then
@@ -14427,17 +14427,17 @@ BrowseCurrentDirectory() {
     else
      GetDirectories
     fi
-    
+
     currentdir_fullpath="$(pwd)"
     currentdir="$(basename `pwd`)"
-    
+
     if [ -z "$currentdir" ]; then
      currentdir="/"
     elif [ "$currentdir" = "$(basename $wk_dir)" ]; then
      # Make it relative to the root path in the storage medium.
      currentdir="/"
     fi
-    
+
     # Make it's shown like /dev/sdd1[/images/], as shown by the command "findmnt". E.g.
     # findmnt --df --target  /home/partimag/
     # SOURCE                    FSTYPE    SIZE  USED  AVAIL USE% TARGET
@@ -14453,7 +14453,7 @@ BrowseCurrentDirectory() {
            0 $RESTORE_DIA_WIDTH $height $DIA_ESC $filelist 2> $TMP
       rc=$?
       option="$(cat $TMP)"
-      
+
       if [ "$option" = "<ABORT>" ]; then
         return 1
       fi
@@ -14502,7 +14502,7 @@ get_directories_list_common() {
      fileinfo="${fileinfo}_NO_SUBDIR"
    fi
    # Group them, collect normal dirs first, then conezilla img dir.
-   
+
    if [ -e "$file/clonezilla-img" ]; then
      filelist_CZ="$filelist_CZ $(basename "$file") $fileinfo"
      CZ_imgs="$CZ_imgs $(basename "$file")"
@@ -14522,7 +14522,7 @@ get_directories_list_common() {
  # third is cz_img directories
  # fourth is Exit/Abort option
  filelist="$filelist <ABORT> $(rep_whspc_w_udrsc "$msg_exit_browsing")"
- 
+
  if [ "$numfiles" -lt "$MAX_DIALOG_HEIGHT" ]; then
    height="$numfiles"
  else
@@ -14613,7 +14613,7 @@ create_bt_image_files_from_partclone_img() {
   if is_partclone_image "$ocsroot/$tgt_dir" $img_file; then
     # ===========================================
     target_d="$ocsroot/$tgt_dir"
-    # First, we find the filesystem 
+    # First, we find the filesystem
     file_="$(unalias ls &>/dev/null; ls "$target_d"/$img_file.*-img* 2>/dev/null | sort | head -n 1)"
     if [ -n "${file_}" ]; then
       file_basename="$(basename ${file_})"
@@ -14633,7 +14633,7 @@ create_bt_image_files_from_partclone_img() {
       echo "$msg_program_stop." | tee --append ${OCS_LOGFILE}
       exit 1
     fi
-  
+
     if [ -n "$(echo "$file_basename" | grep -Eo -- "-ptcl-img")" ]; then
       # New format
       if [ -n "$(echo "$file_basename" | grep -Eo -- "-ptcl-img.*.aa")" ]; then
@@ -14678,7 +14678,7 @@ create_bt_image_files_from_partclone_img() {
       if [ "$fs_" != "dd" ]; then
         cmd_partclone_extract="partclone.${fs_} -d -r $PARTCLONE_RESTORE_OPT -s - -T --buffer_size ${bt_buffer_size} -o $ocsroot_btzone/$tgt_dir/$img_file"
       else
-        # Some parameters for partclone.dd are not required. Here "-r" is not provided by partclone.dd when extracting 
+        # Some parameters for partclone.dd are not required. Here "-r" is not provided by partclone.dd when extracting
         cmd_partclone_extract="partclone.${fs_} -d $PARTCLONE_RESTORE_OPT -s - --btfiles --buffer_size ${bt_buffer_size} -o $ocsroot_btzone/$tgt_dir/$img_file"
       fi
       echo "Preparing image slice files for BT use: $ocsroot_btzone/$tgt_dir/${img_file}/" | tee --append ${OCS_LOGFILE}
@@ -14749,12 +14749,12 @@ create_bt_image_files_from_partclone_img() {
       # The file is NOT split, so the file name is just like "hda1" only, no "."
       img_file_prefix="${img_file}.dd-img"
     fi
-    
+
     echo $msg_delimiter_star_line | tee --append ${OCS_LOGFILE}
     partclone_img_info_tmp="$PARTCLONE_LOG"
     unzip_stdin_cmd_error="$(mktemp /tmp/unzip_stdin_cmd_error.XXXXXX)"
     [ -f "$partclone_img_info_tmp" ] && rm -f $partclone_img_info_tmp
-    
+
     start_time="$(date +%s%N)"
     # //NOTE// Here we force to use LC_ALL=C for partclone since we need to use get_partclone_image_info to parse the log file to get the rate. Only the keyword in English is supported in get_partclone_image_info.
     cat <<_EOT_ >> ${OCS_LOGFILE}
@@ -14778,13 +14778,13 @@ _EOT_
     | LC_ALL=C partclone.dd $PARTCLONE_RESTORE_OPT -L $partclone_img_info_tmp -d --btfiles \
       --buffer_size ${bt_buffer_size} -s - -o "$ocsroot_btzone/$tgt_dir/$img_file"
     retcodes=(${PIPESTATUS[@]})
-    
+
     if [ ${retcodes[1]} -eq 0 -a ${retcodes[2]} -eq 0 ]; then
       rc=0
     else
       rc=1
     fi
-    
+
     cat "${partclone_img_info_tmp}" >> ${OCS_LOGFILE}
     ocs_log_rotate $ocs_log_dir/partclone-btfiles.log
     cp "${partclone_img_info_tmp}" $ocs_log_dir/partclone-btfiles.log
@@ -14792,7 +14792,7 @@ _EOT_
       cat "$unzip_stdin_cmd_error" | tee --append ${OCS_LOGFILE}
     fi
     rm -f $unzip_stdin_cmd_error
-    
+
     end_time="$(date +%s%N)"
     # ====================================
   else
@@ -14817,7 +14817,7 @@ create_LVM_bt_image_files_from_partclone_img() {
   LOGV_PARSE_CONF="$imagedir/$target_dir/lvm_logv.list"
   [ ! -f "$PV_PARSE_CONF" ] && exit 1
   [ ! -f "$LOGV_PARSE_CONF" ] && exit 1
-  
+
   while read lv fs; do
    # Process the real data partition, only those in the chosen partitions
    # Ex:
@@ -14839,8 +14839,8 @@ create_LVM_bt_image_files_from_partclone_img() {
    # Convert to file name prefix, e.g. /dev/lucid-server/root -> lucid-server-root
    fn="$(to_ocs_dev_img_name $lv)"
    # Skip feeding swap
-   case "$fs" in 
-     *[Ss][Ww][Aa][Pp]*) continue;; 
+   case "$fs" in
+     *[Ss][Ww][Aa][Pp]*) continue;;
    esac
    if [ ! -d "$ocsroot_btzone/$tgt_dir/$(to_filename $fn)" -o \
           "$(find "$ocsroot_btzone/$tgt_dir/$(to_filename $fn)" \
@@ -14870,7 +14870,7 @@ check_if_in_clonezilla_live(){
   # LIVE_MEDIA is global variable.
   # Get the live media mount point.
   get_live_media_mnt_point
-  
+
   if [ -z "$LIVE_MEDIA" -o ! -d "/$LIVE_MEDIA" ]; then
     echo "This program is intended to be run in Clonezilla Live! This environment is not Clonezilla live."
     echo "Program terminated!"
@@ -15063,7 +15063,7 @@ local_lvm_clone_warning() {
 #
 force_to_dd_clone_local_part() {
   local cmd_partclone
-  case "$S2S_CLONE_PROG_IN_OCS_ONTHEFLY" in 
+  case "$S2S_CLONE_PROG_IN_OCS_ONTHEFLY" in
    dd)
     echo "Filesystem in $src_p is not well supported. Use dd to clone..." | tee --append $OCS_LOGFILE
     dd_img_info_tmp="$(mktemp /tmp/dd_info.XXXXXX)"
@@ -15079,7 +15079,7 @@ force_to_dd_clone_local_part() {
     [ -f "$dd_img_info_tmp" ] && rm -f $dd_img_info_tmp
     ;;
    partclone)
-    echo "Using partclone to clone the file system sector by sector..." | tee --append $OCS_LOGFILE 
+    echo "Using partclone to clone the file system sector by sector..." | tee --append $OCS_LOGFILE
     get_partclone_direct_io_opt read $src_p # Obtain ptcl_read_dio_opt
     get_partclone_direct_io_opt write $tgt_p # Obtain ptcl_write_dio_opt
     cmd_partclone="partclone.dd $PARTCLONE_RESTORE_OPT $ptcl_read_dio_opt $ptcl_write_dio_opt -L $PARTCLONE_LOG -s $src_p -O $tgt_p"
@@ -15134,7 +15134,7 @@ local_partition_to_partiton_clone() {
   if [ "$FORCE_TO_USE_DD" = "yes" ]; then
     force_to_dd_clone_local_part
   elif [ "$USE_NTFSCLONE_IN_OCS_ONTHEFLY" = "yes" ] && [ "$pt_fs" = "ntfs" ]; then
-    echo "Using ntfsclone to clone..."  
+    echo "Using ntfsclone to clone..."
     check_ntfs_partition_integrity $src_p
     ntfsclone --save-image --output - $src_p 2>/dev/null | \
     ntfsclone $ntfsclone_progress_option --restore-image --overwrite $tgt_p -
@@ -15157,13 +15157,13 @@ local_partition_to_partiton_clone() {
     ocs_log_rotate $ocs_log_dir/partclone-$(to_filename ${tgt_p#/dev/*}).log
     cp "${PARTCLONE_LOG}" $ocs_log_dir/partclone-$(to_filename ${tgt_p#/dev/*}).log
   elif `is_partimage_support_fs $pt_fs`; then
-    echo "Using partimage to clone..."  
+    echo "Using partimage to clone..."
     partimage $DEFAULT_STDOUT_PARTIMAGE_SAVE_OPT save $src_p stdout 2> /dev/null | \
     partimage $DEFAULT_STDIN_PARTIMAGE_RESTORE_OPT $PARTIMAGE_RESTORE_ONTHEFLY_OPT restore $tgt_p stdin
     ret=$?
   else
     local_lvm_clone_warning
-    # Unknown file system, use dd or partclone.dd	   
+    # Unknown file system, use dd or partclone.dd
     force_to_dd_clone_local_part
   fi
   echo "$msg_delimiter_star_line"
@@ -15205,8 +15205,8 @@ netcat_nuttcp_check() {
        echo "$msg_program_stop!!"
        exit 1
     fi
-    
-    LC_ALL=C $NC_CMD -h > $nc_tmp 2>&1 
+
+    LC_ALL=C $NC_CMD -h > $nc_tmp 2>&1
     if [ -n "$(grep -Ei "^OpenBSD" $nc_tmp)" ]; then
        # netcat.openbsd won't exit if its option -N is not used. However,
        # if it's used, it has an issue to receive from stdin in the destination
@@ -15362,13 +15362,13 @@ onthefly_receive_partition_from_server_then_write() {
   esac
   echo "$msg_delimiter_star_line"
   if [ "$USE_NTFSCLONE_IN_OCS_ONTHEFLY" = "yes" ] && [ "$pt_fs" = "ntfs" ]; then
-    echo "Using ntfsclone to clone..." | tee --append $OCS_LOGFILE 
+    echo "Using ntfsclone to clone..." | tee --append $OCS_LOGFILE
     $netpipe_cli_cmd | $net_filter_decomp | \
     ntfsclone $ntfsclone_progress_option --restore-image --overwrite $tgt_p -
     ret=$?
   elif [ "$USE_PARTCLONE_IN_OCS_ONTHEFLY" = "yes" ] && `is_partclone_support_fs $pt_fs`; then
     # Ex: partclone.reiserfs -s - -o /dev/hdc1
-    echo "Using partclone.${pt_fs} to clone..." | tee --append $OCS_LOGFILE 
+    echo "Using partclone.${pt_fs} to clone..." | tee --append $OCS_LOGFILE
     if [ "${pt_fs}" != "dd" ]; then
       cmd_partclone="$netpipe_cli_cmd | $net_filter_decomp | \
       partclone.${pt_fs} $PARTCLONE_RESTORE_OPT -L $PARTCLONE_LOG -s - -r -o $tgt_p"
@@ -15384,16 +15384,16 @@ onthefly_receive_partition_from_server_then_write() {
     ocs_log_rotate $ocs_log_dir/partclone-$(to_filename ${tgt_p#/dev/*}).log
     cp "${PARTCLONE_LOG}" $ocs_log_dir/partclone-$(to_filename ${tgt_p#/dev/*}).log
   elif `is_partimage_support_fs $pt_fs`; then
-    echo "Using partimage to clone..."  
+    echo "Using partimage to clone..."
     [ "$verbose" = "on" ] && echo "$netpipe_cli_cmd | $net_filter_decomp | partimage $DEFAULT_STDIN_PARTIMAGE_RESTORE_OPT $PARTIMAGE_RESTORE_ONTHEFLY_OPT restore $tgt_p stdin"
     $netpipe_cli_cmd | $net_filter_decomp | \
     partimage $DEFAULT_STDIN_PARTIMAGE_RESTORE_OPT $PARTIMAGE_RESTORE_ONTHEFLY_OPT restore $tgt_p stdin
     ret=$?
   else
     # Unknown file system, use dd or partclone.dd
-    case "$S2S_CLONE_PROG_IN_OCS_ONTHEFLY" in 
+    case "$S2S_CLONE_PROG_IN_OCS_ONTHEFLY" in
      dd)
-      echo "Filesystem in $src_p is not well supported. Use dd to clone..." | tee --append $OCS_LOGFILE 
+      echo "Filesystem in $src_p is not well supported. Use dd to clone..." | tee --append $OCS_LOGFILE
       pt_size="$(grep -Ew "^$tgt_p" $tgt_pt_info | awk -F" " '{print $3}')"
       trigger_dd_status_report $tgt_p $pt_size &
       $netpipe_cli_cmd | $net_filter_decomp | \
@@ -15401,7 +15401,7 @@ onthefly_receive_partition_from_server_then_write() {
       ret=$?
       ;;
      partclone)
-      echo "Using partclone.dd to do sector-by-sector cloning..."  
+      echo "Using partclone.dd to do sector-by-sector cloning..."
       cmd_partclone="$netpipe_cli_cmd | $net_filter_decomp | \
       partclone.dd $PARTCLONE_RESTORE_OPT -L $PARTCLONE_LOG -s - -o $tgt_p"
       echo "Running: $cmd_partclone" | tee --append ${OCS_LOGFILE}
@@ -15457,13 +15457,13 @@ feed_dev_in_onthefly_server() {
     # Since we run partclone in the background, it's useless to cat the log now.
     # cat "${PARTCLONE_LOG}" >> ${OCS_LOGFILE}
   elif `is_partimage_support_fs $pt_fs`; then
-    echo "Using partimage to clone..."  
+    echo "Using partimage to clone..."
     [ "$verbose" = "on" ] && echo "partimage $DEFAULT_STDOUT_PARTIMAGE_SAVE_OPT save $src_p stdout 2> /dev/null | $net_filter_comp | $netpipe_srv_cmd &"
     partimage $DEFAULT_STDOUT_PARTIMAGE_SAVE_OPT save $src_p stdout 2> /dev/null | \
     $net_filter_comp | $netpipe_srv_cmd &
     ret=$?
   else
-    case "$S2S_CLONE_PROG_IN_OCS_ONTHEFLY" in 
+    case "$S2S_CLONE_PROG_IN_OCS_ONTHEFLY" in
      dd)
       echo "Filesystem in $src_p is not well supported. Use dd to clone..." | tee --append $OCS_LOGFILE
       LC_ALL=C dd bs=1M if=$src_p | \
@@ -15471,7 +15471,7 @@ feed_dev_in_onthefly_server() {
       ret=$?
       ;;
      partclone)
-      echo "Filesystem in $src_p is not well supported. Use partclone.dd to clone..." | tee --append $OCS_LOGFILE 
+      echo "Filesystem in $src_p is not well supported. Use partclone.dd to clone..." | tee --append $OCS_LOGFILE
       # Ex: partclone.reiserfs -c -s /dev/hda3 -o -
       get_partclone_direct_io_opt read $src_p # Obtain ptcl_read_dio_opt
       echo "Using partclone to clone..." | tee --append $OCS_LOGFILE
@@ -15530,7 +15530,7 @@ onthefly_feed_partition_or_lv_in_server() {
      done
      [ "$is_in_chosen_partition" = "no" ] && continue
      # if it's swap, output the labe and uuid only.
-     case "$fs" in 
+     case "$fs" in
        *[Ss][Ww][Aa][Pp]*|*extended*)
          continue ;;
      esac
@@ -15625,7 +15625,7 @@ onthefly_receive_partition_or_lv_in_client() {
     # Only when the target_type is disk we will create swap partition, other we might make a mistake to format the existing partition as swap partition.
     if [ "$target_type" = "disk" ]; then
       # if it's swap, output the labe and uuid only.
-      case "$fs" in 
+      case "$fs" in
         *[Ss][Ww][Aa][Pp]*)
           fn="$(to_ocs_dev_img_name $lv)"
           echo "Found the swap partition $lv, create it by:"
@@ -15643,7 +15643,7 @@ onthefly_receive_partition_or_lv_in_client() {
           mkswap $label_opt $uuid_opt $lv
           echo $msg_delimiter_star_line
           continue ;;
-        *extended*) 
+        *extended*)
           continue ;;
       esac
     fi
@@ -15747,7 +15747,7 @@ is_linux_raid_member() {
 } # end of is_linux_raid_member
 #
 dump_software_raid_info_if_exists() {
-  local img_dir="$1" 
+  local img_dir="$1"
   local md_devs
   # /proc/mdstat e.g.,
   # root@debian:~# cat /proc/mdstat
@@ -15755,10 +15755,10 @@ dump_software_raid_info_if_exists() {
   # md125 : active (auto-read-only) raid1 sdb1[1] sda1[0]
   #       499968 blocks super 1.0 [2/2] [UU]
   #       bitmap: 0/1 pages [0KB], 65536KB chunk
-  # 
+  #
   # md126 : active raid0 sda3[0] sdb3[1]
   #       15761408 blocks super 1.2 512k chunks
-  # 
+  #
   # md127 : active (auto-read-only) raid1 sda2[0] sdb2[1]
   #       12573696 blocks super 1.2 [2/2] [UU]
   #       bitmap: 0/1 pages [0KB], 65536KB chunk
@@ -15808,7 +15808,7 @@ cnvt_img_key_name_for_saving_mode(){
 		 fi
 		 ;;
     productname|PRODUCTNAME) tgt_part_name="$(get_vendor_product_name)" ;;
-    uuid|UUID) tgt_part_name="$(LC_ALL=C dmidecode 2>/dev/null | 
+    uuid|UUID) tgt_part_name="$(LC_ALL=C dmidecode 2>/dev/null |
 	       grep -Eio "UUID: .*$" | head -n 1 | sed -e "s/^UUID: //g")" ;;
     mac|MAC)
       for i in `LC_ALL=C get-nic-devs`; do
@@ -15856,7 +15856,7 @@ parse_target_dir_with_reserved_name_saving_mode() {
     fi
   fi
   # Parse the ocs_sr_img_name for reserved image names.
-  if [ "$ocs_sr_img_name" = "autoname" ]; then 
+  if [ "$ocs_sr_img_name" = "autoname" ]; then
     # Ref: https://sourceforge.net/projects/clonezilla/forums/forum/799287/topic/4815557
     # We need something unique, so MAC address is a good choice
     for i in `LC_ALL=C get-nic-devs`; do
@@ -15871,8 +15871,8 @@ parse_target_dir_with_reserved_name_saving_mode() {
       prefix_mac="$(LC_ALL=C dmidecode 2>/dev/null | \
                   grep -Eio "UUID: .*$" | head -n 1 | sed -e "s/^UUID: //g")"
     fi
-    target_dir="${prefix_mac}-$(LC_ALL=C date '+%Y-%m%d-%H%M')-img" 
-  elif [ "$ocs_sr_img_name" = "autohostname" ]; then 
+    target_dir="${prefix_mac}-$(LC_ALL=C date '+%Y-%m%d-%H%M')-img"
+  elif [ "$ocs_sr_img_name" = "autohostname" ]; then
     # Ref: https://sourceforge.net/projects/clonezilla/forums/forum/663168/topic/5103006
     ip=""
     for i in `LC_ALL=C get-nic-devs`; do
@@ -15883,7 +15883,7 @@ parse_target_dir_with_reserved_name_saving_mode() {
     done
     # If not found, give it a default name based on time.
     if [ -z "ip" ]; then
-      prefix_host="autohostname-$(LC_ALL=C date '+%Y-%m%d-%H%M')" 
+      prefix_host="autohostname-$(LC_ALL=C date '+%Y-%m%d-%H%M')"
     else
       if LC_ALL=C host $ip &>/dev/null; then
         # FQDN found
@@ -15895,10 +15895,10 @@ parse_target_dir_with_reserved_name_saving_mode() {
       fi
     fi
     target_dir="${prefix_host}-img"
-  elif [ "$ocs_sr_img_name" = "autoproductname" ]; then 
+  elif [ "$ocs_sr_img_name" = "autoproductname" ]; then
     # Ref: https://sourceforge.net/projects/clonezilla/forums/forum/663168/topic/5103006
     target_dir="$(get_vendor_product_name)-img"
-  elif [ -n "$(echo "$ocs_sr_img_name" | grep -E "^autoname-")" ]; then 
+  elif [ -n "$(echo "$ocs_sr_img_name" | grep -E "^autoname-")" ]; then
     # key name: productname, hostname (FQDN), UUID, MAC, year, date, time,
     # month, day, hour, minute, date_F_* (where * is the format for "date")
     # (case insensitive, but must be all uppercase or lowercase)
@@ -15910,7 +15910,7 @@ parse_target_dir_with_reserved_name_saving_mode() {
     # It can be any combination, just make it begin with "autoname-"
     # and separate that with "-".
     # If key name is not any one of the above, it will be shown as itself.
-    # E.g., autoname-fox-year-date-time-uuid -> 
+    # E.g., autoname-fox-year-date-time-uuid ->
     #       fox-2020-1228-0706-564d41fc-9d80-20ac-c812-bda6a392d1d5
     #       autoname-fox-datefmt_%Y%m%d -> fox-20210109
     #       autoname-fox-datefmt_%Y-datefmt_%m%d -> fox-2021-0109
@@ -16058,7 +16058,7 @@ get_luks_dev_from_local_machine() {
     luks_devs_list="$luks_devs_list ${id#/dev/*}"
   done
   # Remove the leading space
-  luks_devs_list="$(echo  "$luks_devs_list" | sed -r -e "s/^[[:space:]]*//g")" 
+  luks_devs_list="$(echo  "$luks_devs_list" | sed -r -e "s/^[[:space:]]*//g")"
   if [ -n "$luks_devs_list" ]; then
     echo "$luks_devs_list"
     return 0
@@ -16545,10 +16545,10 @@ get_disk_id_path() {
     # lrwxrwxrwx 1 root root  9 Mar  6 18:14 pci-0000:00:1f.2-ata-3 -> ../../sda
     id_path_tag="$(LC_ALL=C find /dev/disk/by-path/ -lname "*${dsk_}" -print 2>/dev/null | sort | uniq | head -n 1 | xargs basename  2>/dev/null | tr ":" "_")"
   fi
-  # id_path_tag result, e.g.: 
+  # id_path_tag result, e.g.:
   # pci-0000_02_04_0-ata-1_0
 
-} # end of get_disk_id_path 
+} # end of get_disk_id_path
 #
 check_if_nvme_ssd() {
   # Return 0: true, 1: false
@@ -16562,7 +16562,7 @@ check_if_nvme_ssd() {
   rota_v="$(LC_ALL=C lsblk -n -d -o rota $dev_ 2>/dev/null)"
   rota_v="$(echo $rota_v)" # Clean leading white spaces.
   if [ "$rota_v" = "0" ]; then
-    case "$dev_" in 
+    case "$dev_" in
       /dev/nvme*) rc=0;;
     esac
   fi
@@ -16579,7 +16579,7 @@ get_partclone_direct_io_opt() {
   #  get_partclone_direct_io_opt read $src_p # Obtain ptcl_read_dio_opt
   #  get_partclone_direct_io_opt write $tgt_p # Obtain ptcl_write_dio_opt
   #  cmd_partclone="partclone.${pt_fs} $PARTCLONE_RESTORE_OPT $ptcl_read_dio_opt $ptcl_write_dio_opt -L $PARTCLONE_LOG -b -s $src_p -O $tgt_p"
-  case "$i_type_" in 
+  case "$i_type_" in
     write) ptcl_write_dio_opt="";;
     read)  ptcl_read_dio_opt="";;
   esac
@@ -16590,7 +16590,7 @@ get_partclone_direct_io_opt() {
   # Only when the block device is NVMe SSD, use direct IO option of Partclone.
   hdtmp_="/dev/$(get_diskname $i_part_)"
   if `check_if_nvme_ssd $hdtmp_`; then
-    case "$i_type_" in 
+    case "$i_type_" in
       write) ptcl_write_dio_opt="--write-direct-io";;
       read)  ptcl_read_dio_opt="--read-direct-io";;
     esac
@@ -16707,23 +16707,23 @@ check_mtd_emmcboot_dev(){
   # into a single, space-separated variable.
   local -a found_devices
   local special_devices
-  
+
   # Enable nullglob. This makes glob patterns expand to an empty list
   # if no files match, preventing errors.
   shopt -s nullglob
-  
+
   # Create an array by expanding both glob patterns at once.
   if [[ "$save_mtdblock" == "yes" ]]; then
     found_devices+=(/dev/mtdblock*)
   fi
-  
+
   if [[ "$save_mmcblkboot" == "yes" ]]; then
     found_devices+=(/dev/mmcblk*boot*)
   fi
-  
+
   # Disable nullglob to restore default shell behavior and avoid side effects.
   shopt -u nullglob
-  
+
   # Check if the array has any elements.
   if [ ${#found_devices[@]} -gt 0 ]; then
     # If devices were found, convert the array into a single space-separated string.
@@ -16746,7 +16746,7 @@ restore_mtd_emmcboot_dev_prepare(){
 
   special_dev="$(check_mtd_emmcboot_dev 2>/dev/null)"
 
-  all_plist="$(get_parts_list_from_img "$ocsroot/$target_dir")" 
+  all_plist="$(get_parts_list_from_img "$ocsroot/$target_dir")"
   for isd in $special_dev; do
     # Check if its image exists in the image dir
     if [ -n "$(echo "$all_plist" | grep -Ew $isd)" ]; then

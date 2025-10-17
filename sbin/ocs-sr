@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# License: GPL 
+# License: GPL
 # Original author: Blake, Kuo-Lien Huang
 # Description:
 #  2003/04/11 the first version, only work on /dev/hda1 & PXE
-#  2003/06/01 disk to disk mode & etherboot support 
+#  2003/06/01 disk to disk mode & etherboot support
 #             (the etherboot lzdsk images are located in
 #              /tftpboot/etherboot-5.0.7 after DRBLCD installed)
 #  2003/07/18 `checkInodeForDevice`
@@ -75,7 +75,7 @@ select_img_in_client="no"
 create_part_by_sfdisk="yes"
 # we want to make sfdisk --force if sfdisk is used.
 sfdisk_opt="--force"
-# Normally we do not dump MBR again when everything is done. However, This is an insurance for some hard drive has different numbers of cylinder, head and sector between image was saved and restored.". If the option is "yes", we will use dd to dump the MBR (total 512 Bytes, i.e. 446 bytes (executable code area) + 64 bytes (table of primary partitions) + 2 bytes (MBR signature; # 0xAA55) = 512 bytes) after disk was restored. 
+# Normally we do not dump MBR again when everything is done. However, This is an insurance for some hard drive has different numbers of cylinder, head and sector between image was saved and restored.". If the option is "yes", we will use dd to dump the MBR (total 512 Bytes, i.e. 446 bytes (executable code area) + 64 bytes (table of primary partitions) + 2 bytes (MBR signature; # 0xAA55) = 512 bytes) after disk was restored.
 dump_mbr_in_the_end="no"
 # The flag to save or restore the hidden data between MBR and 1st partition.
 clone_hidden_data="no"
@@ -98,7 +98,7 @@ encrypt_ocs_img=""
 # Default to remove the ntfs volume dirty flag after it's restored.
 rm_ntfs_vol_dirty_flag="yes"
 # Default to save the file system in the partition or LV. If no, it means to save other info as a disk image. This is only for some special cases.
-do_fs_save="yes" 
+do_fs_save="yes"
 # Default to run ocs-update-initrd to update the initramfs of restored OS
 do_update_initrd="yes"
 # Default not to play sound when job is done.
@@ -141,12 +141,12 @@ USAGE() {
     echo "IMAGE is the image dir name in $ocsroot, not absolute path"
     echo "DEVICE name can be with or without /dev/, e.g., /dev/sda or sda."
     echo "When in saving mode, the DEVICE name can also be assigned by:"
-    echo "For disk: PTUUID or SERIALNO (short format), e.g., PTUUID=03c8b280-47aa-4881-aca5-9b9c66fe28c7." 
+    echo "For disk: PTUUID or SERIALNO (short format), e.g., PTUUID=03c8b280-47aa-4881-aca5-9b9c66fe28c7."
     echo "For partition: UUID or PARTUUID, e.g., UUID=0b51ce79-7bc0-4111-8a40-839461a9b12f"
     echo "When in resotoring mode, the DEVICE name can also be assigned by (for disk only):"
     echo "SERIALNO (short format), e.g., SERIALNO=2YK8XSYD."
     echo "If there are spaces in SERIALNO, replace every space by \"_\""
-    echo 
+    echo
     echo " Options for saving:"
     USAGE_common_save
     echo " -i, --image-size SIZE    Set the split image file volume size SIZE (MB). When $ocs is run with -x, the default SIZE is set as $VOL_LIMIT_IN_INTERACTIVE, if without -x, we will not split it."
@@ -191,7 +191,7 @@ USAGE() {
 parse_ocs_sr_cmd_options_with_dash() {
  # Parse command-line options
  # It's UGLY to use "shift; n_shift=$((n_shift+1))"
- # However, we want to reuse the parse_ocs_sr_cmd_options_with_dash, 
+ # However, we want to reuse the parse_ocs_sr_cmd_options_with_dash,
  # a problem here:
  # The parameters (-b -g auto --nogui --max-time-to-wait 300 --language 0 multicast_restoreparts sarge-base "hda1 hda3" 2232), when put it as $*, it will
  # become (-b -g auto --nogui --max-time-to-wait 300 --language 0 multicast_restoreparts sarge-base hda1 hda3 2232), you see, "hda1 hda3" -> hda1 hda3
@@ -204,16 +204,16 @@ parse_ocs_sr_cmd_options_with_dash() {
     -l|--language)
             shift; n_shift=$((n_shift+1))
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
 	      specified_lang="$1"
               shift; n_shift=$((n_shift+1))
             fi
             [ -z "$specified_lang" ] && USAGE && exit 1
 	    ;;
-    -g|--grub-install)  
+    -g|--grub-install)
             install_grub="on"
             shift; n_shift=$((n_shift+1))
-            # skip the -xx option, in case 
+            # skip the -xx option, in case
             if [ -z "$(echo $1 |grep ^-.)" ]; then
 	      grub_partition="$(strip_leading_dev $1)"
               shift; n_shift=$((n_shift+1))
@@ -222,33 +222,33 @@ parse_ocs_sr_cmd_options_with_dash() {
             ;;
     -f|--from-part)
             shift; n_shift=$((n_shift+1))
-            # skip the -xx option, in case 
+            # skip the -xx option, in case
             if [ -z "$(echo $1 |grep ^-.)" ]; then
 	      source_part="$(strip_leading_dev $1)"
               shift; n_shift=$((n_shift+1))
             fi
             [ -z "$source_part" ] && USAGE && exit 1
             ;;
-    -a|--no-force-dma-on)  
+    -a|--no-force-dma-on)
 	    force_dma_on="no"
             shift; n_shift=$((n_shift+1));;
-    -k|--no-fdisk|--no-create-partition)  
+    -k|--no-fdisk|--no-create-partition)
 	    create_part="no"
             shift; n_shift=$((n_shift+1));;
     -k0)    # Do nothing. Just an option to let us explain the action easier.
 	    true
             shift; n_shift=$((n_shift+1));;
-    -k1|--fdisk-proportion)  
+    -k1|--fdisk-proportion)
 	    create_part="yes"
 	    create_part_type="proportion"
             shift; n_shift=$((n_shift+1));;
-    -k2|--fdisk-manual)  
+    -k2|--fdisk-manual)
 	    create_part="yes"
 	    create_part_type="manual"
             shift; n_shift=$((n_shift+1));;
     -np|--net-pipe)
             shift; n_shift=$((n_shift+1))
-            # skip the -xx option, in case 
+            # skip the -xx option, in case
             if [ -z "$(echo $1 |grep ^-.)" ]; then
 	      ONTHEFLY_NET_PIPE=$1
               shift; n_shift=$((n_shift+1))
@@ -257,24 +257,24 @@ parse_ocs_sr_cmd_options_with_dash() {
             ;;
     --net-filter)
             shift; n_shift=$((n_shift+1))
-            # skip the -xx option, in case 
+            # skip the -xx option, in case
             if [ -z "$(echo $1 |grep ^-.)" ]; then
               net_filter=$1
               shift; n_shift=$((n_shift+1))
             fi
             [ -z "$net_filter" ] && USAGE && exit 1
             ;;
-    -noabo|--not-only-access-by-owner)  
+    -noabo|--not-only-access-by-owner)
             only_access_by_owner="no"
             shift; n_shift=$((n_shift+1));;
-    -t|--no-restore-mbr)  
+    -t|--no-restore-mbr)
 	    restore_mbr="no"
             shift; n_shift=$((n_shift+1));;
-    -t1|--restore-raw-mbr)  
+    -t1|--restore-raw-mbr)
             # The flag to restore syslinux mbr.bin to MS windows system.
 	    restore_prebuild_mbr="yes"
             shift; n_shift=$((n_shift+1));;
-    -t2|--no-restore-ebr)  
+    -t2|--no-restore-ebr)
 	    restore_ebr="no"
             shift; n_shift=$((n_shift+1));;
     -u|--select-img-in-client)
@@ -283,10 +283,10 @@ parse_ocs_sr_cmd_options_with_dash() {
     -e|--load-geometry)
 	    load_HD_CHS_from_img="yes"
             shift; n_shift=$((n_shift+1));;
-    -e1|--change-geometry)  
+    -e1|--change-geometry)
             change_ntfs_boot_chs="on"
             shift; n_shift=$((n_shift+1))
-            # skip the -xx option, in case 
+            # skip the -xx option, in case
             if [ -z "$(echo $1 |grep ^-.)" ]; then
 	      ntfs_boot_partition="$(format_dev_name_with_leading_dev $1)"
               shift; n_shift=$((n_shift+1))
@@ -338,7 +338,7 @@ parse_ocs_sr_cmd_options_with_dash() {
     -w|--wait-time)
             shift; n_shift=$((n_shift+1))
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
 	      TIME_to_wait="$1"
               shift; n_shift=$((n_shift+1))
             fi
@@ -352,20 +352,20 @@ parse_ocs_sr_cmd_options_with_dash() {
     -d|--debug-mode)
             debug_mode="on"
 	    shift; n_shift=$((n_shift+1));;
-    -d0|--dialog)  
-	    DIA="dialog" 
+    -d0|--dialog)
+	    DIA="dialog"
 	    shift;;
-    -d1|--Xdialog)  
-	    DIA="Xdialog" 
+    -d1|--Xdialog)
+	    DIA="Xdialog"
 	    shift;;
-    -d2|--whiptail)  
-	    DIA="whiptail" 
+    -d2|--whiptail)
+	    DIA="whiptail"
 	    shift;;
-    -d3|--gdialog)  
-	    DIA="gdialog" 
+    -d3|--gdialog)
+	    DIA="gdialog"
 	    shift;;
-    -d4|--kdialog)  
-	    DIA="kdialog" 
+    -d4|--kdialog)
+	    DIA="kdialog"
 	    shift;;
     -enc|--enc-ocs-img)
             encrypt_ocs_img="yes"
@@ -376,7 +376,7 @@ parse_ocs_sr_cmd_options_with_dash() {
     -pe|--passwd-ecryptfs)
             shift; n_shift=$((n_shift+1))
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
               passwd_ecryptfs=$1
               shift; n_shift=$((n_shift+1))
             fi
@@ -388,7 +388,7 @@ parse_ocs_sr_cmd_options_with_dash() {
     -pfe|--passwd-file-ecryptfs)
             shift; n_shift=$((n_shift+1))
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
               passwd_file_ecryptfs=$1
               shift; n_shift=$((n_shift+1))
             fi
@@ -397,7 +397,7 @@ parse_ocs_sr_cmd_options_with_dash() {
     -m|--module)
             shift; n_shift=$((n_shift+1))
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
               module_to_load=$1
               shift; n_shift=$((n_shift+1))
             fi
@@ -499,9 +499,9 @@ parse_ocs_sr_cmd_options_with_dash() {
             fsck_src_part_auto="yes"
 	    shift; n_shift=$((n_shift+1));;
     -mp|--mount-point)
-            shift; n_shift=$((n_shift+1)); 
+            shift; n_shift=$((n_shift+1));
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
               mount_point=$1
 	      shift; n_shift=$((n_shift+1))
             fi
@@ -509,9 +509,9 @@ parse_ocs_sr_cmd_options_with_dash() {
 	    ;;
     -or|--ocsroot)
             # overwrite the ocsroot in drbl.conf
-            shift; n_shift=$((n_shift+1)); 
+            shift; n_shift=$((n_shift+1));
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
               ocsroot="$1"
               # The image path for bittorrent slice files will be affected
               ocsroot_btzone="$ocsroot/btzone"
@@ -522,7 +522,7 @@ parse_ocs_sr_cmd_options_with_dash() {
     -i|--image-size)
 	    shift; n_shift=$((n_shift+1))
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
               VOL_LIMIT=$1
 	      shift; n_shift=$((n_shift+1))
             fi
@@ -533,7 +533,7 @@ parse_ocs_sr_cmd_options_with_dash() {
 	    # between partitions restoring clone won't timeout.
 	    shift; n_shift=$((n_shift+1))
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
 	      mcast_max_wait_time="$1"
 	      shift; n_shift=$((n_shift+1))
             fi
@@ -580,7 +580,7 @@ parse_ocs_sr_cmd_options_with_dash() {
 	    shift; n_shift=$((n_shift+1))
             change_win_hostname="By_IP"
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
 	      win_hostname_prefix="$1"
 	      shift; n_shift=$((n_shift+1))
             fi
@@ -590,17 +590,17 @@ parse_ocs_sr_cmd_options_with_dash() {
 	    shift; n_shift=$((n_shift+1))
             change_win_hostname="By_MAC"
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
 	      win_hostname_prefix="$1"
 	      shift; n_shift=$((n_shift+1))
             fi
             [ -z "$win_hostname_prefix" ] && USAGE && exit 1
 	    ;;
-    -o|-o1|--run-postrun-dir) 
+    -o|-o1|--run-postrun-dir)
             # -o is for backward compatability
 	    run_postrun_dir="yes"
 	    shift; n_shift=$((n_shift+1));;
-    -o0|--run-prerun-dir) 
+    -o0|--run-prerun-dir)
 	    run_prerun_dir="yes"
 	    shift; n_shift=$((n_shift+1));;
     -ns|--ntfs-progress-in-image-dir)
@@ -636,31 +636,31 @@ parse_ocs_sr_cmd_options_with_dash() {
     -cmf|--chk-chksum-for-files-in-dev)
 	    chk_chksum_for_files_in_dev="yes"
 	    shift; n_shift=$((n_shift+1));;
-    -x|--interactive) 
+    -x|--interactive)
 	    ocs_sr_mode="interactive"
 	    shift; n_shift=$((n_shift+1));;
     --mcast-port)
-            shift; n_shift=$((n_shift+1)); 
+            shift; n_shift=$((n_shift+1));
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
               ocs_sr_mcast_port="$1"
 	      shift; n_shift=$((n_shift+1))
             fi
             [ -z "$ocs_sr_mcast_port" ] && USAGE && exit 1
 	    ;;
     --data-port)
-            shift; n_shift=$((n_shift+1)); 
+            shift; n_shift=$((n_shift+1));
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
               NC_PORT="$1"
 	      shift; n_shift=$((n_shift+1))
             fi
             [ -z "$NC_PORT" ] && USAGE && exit 1
 	    ;;
-    -p|--postaction)  
-            shift; n_shift=$((n_shift+1)); 
+    -p|--postaction)
+            shift; n_shift=$((n_shift+1));
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
 	      postaction="$1"
 	      shift; n_shift=$((n_shift+1))
             fi
@@ -673,9 +673,9 @@ parse_ocs_sr_cmd_options_with_dash() {
 	    ocs_x_mode="restore_only"
 	    shift; n_shift=$((n_shift+1));;
     -s|--source-IP)
-            shift; n_shift=$((n_shift+1)); 
+            shift; n_shift=$((n_shift+1));
             if [ -z "$(echo $1 |grep ^-.)" ]; then
-              # skip the -xx option, in case 
+              # skip the -xx option, in case
 	      SOURCE_IP="$1"
 	      shift; n_shift=$((n_shift+1))
             fi
@@ -685,27 +685,27 @@ parse_ocs_sr_cmd_options_with_dash() {
 	    ocs_x_mode="save_only"
 	    shift; n_shift=$((n_shift+1));;
     -os|--ocs-server)
-            shift; n_shift=$((n_shift+1)); 
-            # skip the -xx option, in case 
+            shift; n_shift=$((n_shift+1));
+            # skip the -xx option, in case
             if [ -z "$(echo $1 |grep ^-.)" ]; then
               ocs_server="$1"
-              shift; n_shift=$((n_shift+1)); 
+              shift; n_shift=$((n_shift+1));
             fi
             [ -z "$ocs_server" ] && USAGE && exit 1
 	    ;;
     -um|--user-mode)
-            shift; n_shift=$((n_shift+1)); 
-            # skip the -xx option, in case 
+            shift; n_shift=$((n_shift+1));
+            # skip the -xx option, in case
             if [ -z "$(echo $1 |grep ^-.)" ]; then
               ocs_user_mode="$1"
-              shift; n_shift=$((n_shift+1)); 
+              shift; n_shift=$((n_shift+1));
             fi
             [ -z "$ocs_user_mode" ] && USAGE && exit 1
 	    ;;
-    -bm|--beginner-mode) 
+    -bm|--beginner-mode)
 	    ocs_user_mode="beginner"
 	    shift; n_shift=$((n_shift+1));;
-    -em|--expert-mode) 
+    -em|--expert-mode)
 	    ocs_user_mode="expert"
 	    shift; n_shift=$((n_shift+1));;
     -icds|--ignore-chk-dsk-size-pt)
@@ -715,11 +715,11 @@ parse_ocs_sr_cmd_options_with_dash() {
 	    update_efi_nvram="no"
 	    shift; n_shift=$((n_shift+1));;
     -luks|--enable-luks)
-            shift; n_shift=$((n_shift+1)); 
-            # skip the -xx option, in case 
+            shift; n_shift=$((n_shift+1));
+            # skip the -xx option, in case
             if [ -z "$(echo $1 |grep ^-.)" ]; then
               enable_luks_mode="$1"
-              shift; n_shift=$((n_shift+1)); 
+              shift; n_shift=$((n_shift+1));
             fi
             [ -z "$enable_luks_mode" ] && USAGE && exit 1
             case "$enable_luks_mode" in
@@ -764,7 +764,7 @@ parse_ocs_sr_cmd_options_with_dash() {
      echo "Partimage was not found in this system. Force to use Partclone."
      [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
      USE_PARTCLONE="yes"
-   fi 
+   fi
  fi
 
  [ -z "$ONTHEFLY_NET_PIPE" ] && ONTHEFLY_NET_PIPE="$ONTHEFLY_NET_PIPE_DEFAULT"
@@ -814,19 +814,19 @@ one_image_to_multiple_disks_dia_des() {
 # functions to process options.
 wrap_up_opt() {
   [ -z "$VOL_LIMIT" ] && VOL_LIMIT=$VOL_LIMIT_DEFAULT
-  
+
   # change to other mount point for extra harddisk
-  # Note: functions get_existing_disk_image, get_existing_parts_image and get_existing_partitions_from_img will use $imagedir 
+  # Note: functions get_existing_disk_image, get_existing_parts_image and get_existing_partitions_from_img will use $imagedir
   if [ -n "$mount_point" ]; then
      echo "Option -mp|--mount-point is assigned."
      echo "Using the image root directory $mount_point instead of $ocsroot."
-     imagedir="$mount_point" 
+     imagedir="$mount_point"
   else
      imagedir="$ocsroot"
   fi
-  
+
   check_ocs_input_params
-  
+
   # Set/Reset init values
   PARTIMAGE_SAVE_OPT="$PARTIMAGE_SAVE_OPT_INIT --debug=$debug_level"
   PARTIMAGE_RESTORE_OPT="$PARTIMAGE_RESTORE_OPT_INIT --debug=$debug_level"
@@ -846,7 +846,7 @@ wrap_up_opt() {
   fi
   if [ "$rescue_mode" = "on" ]; then
     PARTCLONE_SAVE_OPT="$PARTCLONE_SAVE_OPT --rescue --force"
-    # This PARTCLONE_RESTORE_OPT is for device to device cloning use 
+    # This PARTCLONE_RESTORE_OPT is for device to device cloning use
     # when ocs-onthefly call ocs-sr, not for image restoring.
     # Actually when used in image restoring, not harmful for partclone to run.
     PARTCLONE_RESTORE_OPT="$PARTCLONE_RESTORE_OPT --rescue --force"
@@ -854,14 +854,14 @@ wrap_up_opt() {
   if [ "$do_partclone_crc_check" = "no" ]; then
     PARTCLONE_RESTORE_OPT="$PARTCLONE_RESTORE_OPT --ignore_crc"
   fi
-  
+
   echo $msg_delimiter_star_line
   [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
   [ "$create_part" = "no" ] && echo "$msg_do_not_create_part"
   [ "$restore_mbr" = "no" ] && echo "$msg_do_not_restore_mbr"
   [ "$select_img_in_client" = "yes" ] && echo "$msg_you_have_to_input_image_names_in_client"
   [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
-  
+
   # Append postaction, since we did not ask that in set_ocs_sr_extra_param and we might already set that.
   if [ -n "$postaction" -a \
        -z "$(echo $OCS_OPTS | grep -Ewo -- "-p")" ]
@@ -914,7 +914,7 @@ run_ocs_sr_again_prompt() {
   if [ "$ocs_sr_mode" = "interactive" ]; then
     run_again_fname="/tmp/ocs-$img-`date +%F-%H-%M`"
     > $run_again_fname
-    ocs_cmd="$0 $OCS_OPTS $ocs_sr_type \"$img\" $dev" 
+    ocs_cmd="$0 $OCS_OPTS $ocs_sr_type \"$img\" $dev"
     ocs_cmd="$(echo $ocs_cmd)" # Make it one line
     [ "$BOOTUP" = "color" ] && $SETCOLOR_SUCCESS
     echo PS. $msg_run_drbl_ocs_again_cmd | tee --append ${OCS_LOGFILE}
@@ -932,7 +932,7 @@ run_ocs_sr_again_prompt() {
 } # end of run_ocs_sr_again_prompt
 #
 create_clonezilla_live_recovery_iso_zip() {
-    # Target command Ex: 
+    # Target command Ex:
     # ocs-iso -g en -t -k NONE -e "-b -c restoredisk sarge-r5 hda" sarge-r5
     # ocs-live-dev -c -g en -t -k NONE -e "-b -c restoredisk sarge-r5 hda" sarge-r5
     local OCS_PARAM_TMP ans_
@@ -974,7 +974,7 @@ create_clonezilla_live_recovery_iso_zip() {
       rec_dev_name="$(cat $OCS_PARAM_TMP)"
       if [ -z "$rec_dev_name" ]; then
         $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla" \
-        --yesno "$msg_you_must_input_device_name_to_be_restored! $msg_do_u_want_to_do_it_again" 0 0 
+        --yesno "$msg_you_must_input_device_name_to_be_restored! $msg_do_u_want_to_do_it_again" 0 0
          ans_="$?"
          case "$ans_" in
            0) # yes is chosen
@@ -1010,7 +1010,7 @@ create_clonezilla_live_recovery_iso_zip() {
       rec_keymap_file="$(cat $OCS_PARAM_TMP)"
       if [ -z "$rec_keymap_file" ]; then
         $DIA --backtitle "$msg_nchc_free_software_labs" --title "$msg_nchc_clonezilla | $msg_mode: $ocs_mode_prompt" \
-        --yesno "$msg_you_must_input_keymap_file! $msg_do_u_want_to_do_it_again" 0 0 
+        --yesno "$msg_you_must_input_keymap_file! $msg_do_u_want_to_do_it_again" 0 0
          ans_="$?"
          case "$ans_" in
            0) # yes is chosen
@@ -1061,7 +1061,7 @@ create_clonezilla_live_recovery_iso_zip() {
 	  echo "$msg_the_output_file_is_in_dir: $ocsroot"
           [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
           echo -n "$msg_press_enter_to_continue"
-          read 
+          read
 	  eval $ocs_iso_cmd
           ;;
        zip)
@@ -1069,14 +1069,14 @@ create_clonezilla_live_recovery_iso_zip() {
 	  > $run_again_fname
           [ "$BOOTUP" = "color" ] && $SETCOLOR_SUCCESS
           echo PS. $msg_run_drbl_ocs_again_cmd | tee --append ${OCS_LOGFILE}
-          echo $ocs_zip_cmd | tee -a ${OCS_LOGFILE} 
+          echo $ocs_zip_cmd | tee -a ${OCS_LOGFILE}
           output_run_again_script "$ocs_zip_cmd" "$run_again_fname"
 	  [ -e "$run_again_fname" ] && chmod 755 $run_again_fname
           echo "$msg_ocs_sr_again_command_saved_filename: $run_again_fname"
 	  echo "$msg_the_output_file_is_in_dir: $ocsroot"
           [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
           echo -n "$msg_press_enter_to_continue"
-          read 
+          read
 	  eval $ocs_zip_cmd
           ;;
        both)
@@ -1086,14 +1086,14 @@ create_clonezilla_live_recovery_iso_zip() {
           echo PS. $msg_run_drbl_ocs_again_cmd | tee --append ${OCS_LOGFILE}
           echo $ocs_iso_cmd | tee -a ${OCS_LOGFILE}
           output_run_again_script "$ocs_iso_cmd" "$run_again_fname"
-          echo $ocs_zip_cmd | tee -a ${OCS_LOGFILE} 
+          echo $ocs_zip_cmd | tee -a ${OCS_LOGFILE}
           output_run_again_script "$ocs_zip_cmd" "$run_again_fname"
 	  [ -e "$run_again_fname" ] && chmod 755 $run_again_fname
           echo "$msg_ocs_sr_again_command_saved_filename: $run_again_fname"
 	  echo "$msg_the_output_file_is_in_dir: $ocsroot"
           [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
           echo -n "$msg_press_enter_to_continue"
-          read 
+          read
 	  eval $ocs_iso_cmd
 	  eval $ocs_zip_cmd
           ;;
@@ -1165,7 +1165,7 @@ do_savedisk_job(){
     target_hd="$dev_list"
     ;;
    PTUUID=|SERIALNO=)
-    # Input might be multiple devices like: 
+    # Input might be multiple devices like:
     # PTUUID="f722833a" PTUUID="271e1971" SERIALNO="36000c292124c4d6554f924089bd9b83a"
     # PTUUID="f722833a" sdb
 
@@ -1231,7 +1231,7 @@ do_savedisk_job(){
   # check if the device exists
   ANS_TMP=`mktemp /tmp/ocs_chkdev.XXXXXX`
   trap "[ -f "$ANS_TMP" ] && rm -f $ANS_TMP" HUP INT QUIT TERM EXIT
-  check_if_input_device_exist $ANS_TMP $target_hd 
+  check_if_input_device_exist $ANS_TMP $target_hd
   target_hd="$(cat $ANS_TMP | tr -d \")"
   [ -f "$ANS_TMP" ] && rm -f $ANS_TMP
   get_extra_param_when_type_is_ask_user_and_interactive_mode
@@ -1319,7 +1319,7 @@ do_restoredisk_job(){
       exit 1
     fi
     ;;
-  "auto-matchsize") 
+  "auto-matchsize")
     get_not_busy_disks_or_parts harddisk "" ""  # we will get dev_list
     target_hd="$dev_list"
     target_hd_no="$(LC_ALL=C echo $target_hd | wc -w)"
@@ -1341,7 +1341,7 @@ do_restoredisk_job(){
     source_hd_no="$(get_disk_list_from_img "$ocsroot/$target_dir" | sed -e "s/ *$//g")"
     ;;
   SERIALNO=*)
-    # Input might be multiple devices like: 
+    # Input might be multiple devices like:
     # SERIALNO="36000c292124c4d6554f924089bd9b83a" sdb
 
     # Format the input SERIALNO= to be uppercase
@@ -1435,12 +1435,12 @@ do_saveparts_job() {
       get_target_parts_name_from_local_machine  # get $target_parts
     fi
     ;;
-  "all"|"unmounted_parts") 
+  "all"|"unmounted_parts")
     get_not_busy_disks_or_parts partition "" ""  # we will get dev_list
     target_parts="$dev_list"
     ;;
   UUID=*|PARTUUID=*)
-    # Input might be multiple devices like: 
+    # Input might be multiple devices like:
     # UUID="B5F8-50F8" UUID="46f141f2-8ea6-47e4-81f0-052cb95a5e79" PARTUUID="271e1971-01"
     # UUID="B5F8-50F8" sda5 PARTUUID="271e1971-01"
 
@@ -1569,14 +1569,14 @@ do_restoreparts_job(){
   check_input_target_image "$ocsroot/$target_dir"
   # This is actually the max avaiable partitions number from image
   source_parts_no="$(get_parts_list_from_img "$ocsroot/$target_dir" | sed -e "s/ *$//g" | wc -w | awk '{print $1}')"
-  
+
   case "$ocs_sr_dev" in
   "ask_user")
     if [ -z "$source_part" ]; then
       ANS_TMP=`mktemp /tmp/ocs_ans.XXXXXX`
       trap "[ -f "$ANS_TMP" ] && rm -f $ANS_TMP" HUP INT QUIT TERM EXIT
       get_existing_partitions_from_img $ANS_TMP "$ocsroot/$target_dir" no select_from_img
-      # we have to remove " (comes with checklist in dialog) 
+      # we have to remove " (comes with checklist in dialog)
       # so that for loop will work (Specially for FC3/4...)
       source_part="$(cat $ANS_TMP | tr -d \")"
       [ -f "$ANS_TMP" ] && rm -f $ANS_TMP
@@ -1607,7 +1607,7 @@ do_restoreparts_job(){
         echo "$msg_2_or_more_parts_only_same_parts_on_dest"
         [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
         echo -n "$msg_press_enter_to_continue"
-        read 
+        read
       fi
     fi
     ;;
@@ -1668,7 +1668,7 @@ PARTIMAGE_RESTORE_OPT_INIT=""
 OCS_OPT=""
 report_msg=""
 
-# The parameters, example: 
+# The parameters, example:
 # (-b -g auto --nogui --max-time-to-wait 300 --language 0 multicast_restoreparts sarge-base "hda1 hda3" 2232) ->
 # (multicast_restoreparts sarge-base "hda1 hda3" 2232)
 orig_ocs_opt="$*"
@@ -1705,10 +1705,10 @@ if [ ! -d "$ocsroot" ]; then
   # The common error is user try to create a ocsroot as /home/partimage, the default is /home/partimag (without e)
   if [ "$ocsroot" = "/home/partimag" -a -d "/home/partimage" ]; then
     [ "$BOOTUP" = "color" ] && $SETCOLOR_WARNING
-    echo "$msg_home_partimag_not_home_partimage" 
+    echo "$msg_home_partimag_not_home_partimage"
     [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
   fi
-  echo "We can NOT go on! Press \"c\" to enter command prompt or any other key to quit the program..." 
+  echo "We can NOT go on! Press \"c\" to enter command prompt or any other key to quit the program..."
   read fail_answer
   case "$fail_answer" in
     [cC]) sulogin ;;
@@ -1806,7 +1806,7 @@ echo $msg_delimiter_star_line | tee --append $OCS_LOGFILE
 echo "Clonezilla image dir: $ocsroot" | tee --append $OCS_LOGFILE
 [ "$BOOTUP" = "color" ] && $SETCOLOR_NORMAL
 [ ! -d "$ocsroot" ] && mkdir -p $ocsroot
-  
+
 # Some options might be assigned in in /etc/ocs/ocs-live.conf. Here we have to add that.
 if [ -n "$ocs_sr_save_extra_opt" -o -n "$ocs_sr_restore_extra_opt" ]; then
   case "$ocs_sr_type" in
